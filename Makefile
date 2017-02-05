@@ -3,7 +3,7 @@ OFILES_CORE = $(CXXFILES_CORE:%.cpp=%.o)
 
 CXXFILES_MDC = $(wildcard src/mdc/*.cpp)
 OFILES_MDC = $(CXXFILES_MDC:%.cpp=%.o)
-PROGRAMS_MDC = src/mdc/mdc
+PROGRAMS_MDC = mdc.app
 
 INCLUDES= -I. -Isrc/include
 INCLUDES+= -I/usr/local/include
@@ -16,7 +16,7 @@ CXXFLAGS+= -DNDEBUG -DEIGEN_NO_DEBUG -msse2 -msse3 -mssse3 -msse4 -msse4.1 -msse
 CXXFLAGS+= -fopenmp
 CXXFLAGS+= -finline -fbuiltin #-fexpensive-optimizations
 
-CXX = clang-omp++
+CXX = time clang-omp++
 
 .PHONY: all
 all: $(PROGRAMS_MDC)
@@ -25,7 +25,7 @@ all: $(PROGRAMS_MDC)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 $(PROGRAMS_MDC): $(OFILES_CORE) $(OFILES_MDC)
-	$(CXX) -o mdc.app $^ -fopenmp
+	$(CXX) -o $(PROGRAMS_MDC) $^ -fopenmp
 
 depend:
 	$(CXX) -MM $(CXXFLAGS) $(CXXFILES_MDC) >> .deps
