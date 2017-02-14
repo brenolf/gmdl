@@ -11,9 +11,13 @@ int main() {
   nlohmann::json config;
   config_file >> config;
 
-  mdc::Dataset d(config["DATASETS"].get<string>());
+  config_file.close();
 
-  d.open_set("iris", {"Iris-setosa", "Iris-versicolor", "Iris-virginica"});
+  string current_set = config["READ_SET"].get<string>();
+  vector<string> classes = config["SETS"][current_set].get<vector<string>>();
+
+  mdc::Dataset d(config["DATASETS"].get<string>());
+  d.open_set(current_set, classes);
 
   pair<vector<double>, int> sample;
   mdc::MDC classifier(d);

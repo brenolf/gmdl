@@ -1,3 +1,8 @@
 {
-  "DATASETS": "/path/to/data/"
+  "READ_SET": "iris",
+  "DATASETS": "/path/to/data",
+  "SETS": {
+    "iris": ["Iris-setosa", "Iris-versicolor", "Iris-virginica"],
+    "wdbc": ["M", "B"]
+  }
 }
