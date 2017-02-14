@@ -86,9 +86,9 @@ namespace mdc {
     prediction predict(vector<double> &attributes) {
       prediction p;
 
-      p.description_lengths = {{ 0, 0, 0 }};
-
        for (int c = 0; c < _classes; c++) {
+         p.description_lengths.push_back(0);
+
          for (int attr = 0; attr < _dimension; attr++) {
            xokdepp::vector_type sample(1);
            sample << attributes.at(attr);
