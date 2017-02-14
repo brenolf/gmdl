@@ -23,17 +23,17 @@ int main() {
   mdc::MDC classifier(d);
 
   double acc = 0;
-  int TOTAL = 0;
+  int i = 0;
 
   while (d.testing_samples(sample)) {
-    TOTAL++;
+    i++;
 
     mdc::prediction p = classifier.predict(sample.first);
 
     if (p.label == sample.second) {
       acc++;
     } else {
-      cout << "iteration: " << TOTAL << endl;
+      cout << "iteration: " << i << endl;
 
       cout << "data: ";
 
@@ -53,7 +53,7 @@ int main() {
     classifier.train(sample);
   }
 
-  cout << endl << endl << "ACC: " << (acc / TOTAL) << endl;
+  cout << endl << endl << "ACC: " << (acc / i) << endl;
 
   return 0;
 }

@@ -34,9 +34,7 @@ namespace mdc {
       _dimension = dataset.get_dimension();
 
       for (int c = 0; c < _classes; c++) {
-        vector<kde_type> attrs = {
-          { kde_type(1), kde_type(1), kde_type(1), kde_type(1) }
-        };
+        vector<kde_type> attrs(_dimension, kde_type(1));
 
         _distributions.insert(pair<int, vector<kde_type>>(c, attrs));
       }
