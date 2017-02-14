@@ -15,6 +15,7 @@ namespace mdc {
 
     string _separator = ",";
     int _label_column = -1;
+    int _classes_length = -1;
 
     map<string, int> _classes;
     map<int, string> _classes_lookup;
@@ -83,10 +84,26 @@ namespace mdc {
       return _classes_lookup.at(i);
     }
 
+    int get_dimension() {
+      pair<vector<double>, int> sample;
+      _iterate_over_file(sample, _testing);
+
+      _testing.clear();
+      _testing.seekg(0);
+
+      return sample.first.size();
+    }
+
+    int get_label_length() {
+      return _classes_length;
+    }
+
     void open_set(const string name, const vector<string> &classes) {
       _close_sets();
 
-      for (int i = 0; i < classes.size(); i++) {
+      _classes_length = classes.size();
+
+      for (int i = 0; i < _classes_length; i++) {
         _classes[classes[i]] = i;
         _classes_lookup[i] = classes[i];
       }
