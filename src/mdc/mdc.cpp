@@ -47,7 +47,10 @@ int main() {
         cout << d << " ";
       }
 
-      cout << "predicted: " << p.label << ", expected: " << sample.second << endl << endl;
+      double diff = abs(p.description_lengths[p.label] - p.description_lengths[sample.second]);
+
+      cout << endl << "predicted: " << p.label << ", expected: " << sample.second << endl;
+      cout << "DL diff: " << diff << endl << endl;
     }
 
     classifier.train(sample);
