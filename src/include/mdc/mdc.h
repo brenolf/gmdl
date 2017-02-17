@@ -24,7 +24,7 @@ namespace mdc {
   private:
     int _classes;
     int _dimension;
-    double _omega = 0.0001;
+    double _omega = pow(2, -32);
     double _forgeting_factor = 1;
     map<int, vector<kde_type>> _distributions;
 
