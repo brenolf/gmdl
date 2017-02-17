@@ -97,12 +97,14 @@ namespace mdc {
 
            double l = (double) pdf.likelihood(sample);
 
-           if (l == 0) {
+           if (l == 0 || isinf(l)) {
              l = _omega;
            }
 
            p.description_lengths[c] += ceil(-log2(l));
          }
+
+         p.description_lengths[c] = max(p.description_lengths[c], 0.0);
        }
 
        double min = INFINITY;
