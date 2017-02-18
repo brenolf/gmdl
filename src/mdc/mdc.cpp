@@ -47,6 +47,12 @@ int main() {
         cout << d << " ";
       }
 
+      cout << endl << "Theta: ";
+
+      for (auto d : classifier.get_Theta()) {
+        cout << d << " ";
+      }
+
       double diff = abs(p.description_lengths[p.label] - p.description_lengths[sample.second]);
 
       cout << endl << "predicted: " << p.label << ", expected: " << sample.second << endl;

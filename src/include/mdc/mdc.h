@@ -27,11 +27,36 @@ namespace mdc {
     double _omega = pow(2, -32);
     double _forgeting_factor = 1;
     map<int, vector<kde_type>> _distributions;
+    vector<double> _Theta;
+    double _alpha = pow(1, -32);
+
+  private:
+    void _update_Theta(kde_type &pdf, int attr, double x) {
+      if (pdf.size() < 3) {
+        return;
+      }
+
+      double mu = 0;
+      double sigma = 0;
+
+      for (int i = 0; i < pdf.size(); i++) {
+        xokdepp::matrix_type cov = pdf.component(i).covariance();
+        xokdepp::vector_type mean = pdf.component(i).mean();
+
+        mu += mean(0) / pdf.size();
+        sigma += cov(0, 0)/ pdf.size();
+      }
+
+      sigma = max(sqrt(sigma), _omega);
+
+      _Theta.at(attr) -= -_alpha * 1 / exp((x * _Theta.at(attr) - mu) / sigma);
+    }
 
   public:
     MDC(mdc::Dataset &dataset) {
       _classes = dataset.get_label_length();
       _dimension = dataset.get_dimension();
+      _Theta = vector<double>(_dimension, 1);
 
       for (int c = 0; c < _classes; c++) {
         vector<kde_type> attrs(_dimension, kde_type(1));
@@ -44,6 +69,10 @@ namespace mdc {
       while (dataset.training_samples(sample)) {
         train(sample);
       }
+    }
+
+    vector<double> &get_Theta() {
+      return _Theta;
     }
 
     void set_omega(double omega) {
@@ -77,6 +106,8 @@ namespace mdc {
 
         pdf.add_sample(vectorized_sample);
 
+        // _update_Theta(pdf, attr, sample.first.at(attr));
+
         if (pdf.size() >= 3) {
           pdf.estimate_kernel_density();
         }
@@ -86,38 +117,38 @@ namespace mdc {
     prediction predict(vector<double> &attributes) {
       prediction p;
 
-       for (int c = 0; c < _classes; c++) {
-         p.description_lengths.push_back(0);
+      for (int c = 0; c < _classes; c++) {
+        p.description_lengths.push_back(0);
 
-         for (int attr = 0; attr < _dimension; attr++) {
-           xokdepp::vector_type sample(1);
-           sample << attributes.at(attr);
+        for (int attr = 0; attr < _dimension; attr++) {
+          xokdepp::vector_type sample(1);
+          sample << attributes.at(attr);
 
-           kde_type &pdf = _distributions.at(c).at(attr);
+          kde_type &pdf = _distributions.at(c).at(attr);
 
-           double l = (double) pdf.likelihood(sample);
+          double l = (double) pdf.likelihood(sample * _Theta.at(attr));
 
-           if (l == 0 || isinf(l)) {
-             l = _omega;
-           }
+          if (l == 0 || isinf(l)) {
+            l = _omega;
+          }
 
-           p.description_lengths[c] += ceil(-log2(l));
-         }
+          p.description_lengths[c] += ceil(-log2(l));
+        }
 
-         p.description_lengths[c] = max(p.description_lengths[c], 0.0);
-       }
+        p.description_lengths[c] = max(p.description_lengths[c], 0.0);
+      }
 
-       double min = INFINITY;
-       p.label = -1;
+      double min = INFINITY;
+      p.label = -1;
 
-       for (int c = 0; c < _classes; c++) {
-         if (p.description_lengths[c] < min) {
-           min = p.description_lengths[c];
-           p.label = c;
-         }
-       }
+      for (int c = 0; c < _classes; c++) {
+        if (p.description_lengths[c] < min) {
+          min = p.description_lengths[c];
+          p.label = c;
+        }
+      }
 
-       return p;
+      return p;
     }
   };
 }
