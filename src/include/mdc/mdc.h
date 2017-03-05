@@ -35,15 +35,15 @@ namespace mdc {
     double _MIN_THETA = pow(2, -32);
 
   private:
-    void __update_Theta(pair<vector<double>, int> &sample) {
-      double norm = __L_bar(sample.first, sample.second);
+    void __update_Theta(pair<vector<double>, int> &sample, int prediction) {
+      double norm = __L_bar(sample.first, prediction);
+      int kronecker = (prediction == sample.second) ? 1 : 0;
 
       for (int i = 0; i < _dimension; i++) {
-        double partial = __L_hat_attribute(sample.first, sample.second, i);
+        double partial = __L_hat_attribute(sample.first, prediction, i);
+        double grad = partial * log(_Theta.at(i)) * (1 - norm) * (kronecker - norm);
 
-        double J = partial * log(_Theta.at(i)) * (1 - norm);
-
-        _Theta.at(i) -= _alpha * -J;
+        _Theta.at(i) -= _alpha * -grad;
 
         _Theta.at(i) = min(_Theta.at(i), _MAX_THETA);
         _Theta.at(i) = max(_Theta.at(i), _MIN_THETA);
@@ -144,6 +144,11 @@ namespace mdc {
       return _forgeting_factor;
     }
 
+    void train(pair<vector<double>, int> &sample, int prediction) {
+      train(sample);
+      __update_Theta(sample, prediction);
+    }
+
     void train(pair<vector<double>, int> &sample) {
       for (int attr = 0; attr < _dimension; attr++) {
         xokdepp::vector_type vectorized_sample(1);
@@ -157,8 +162,6 @@ namespace mdc {
           pdf.estimate_kernel_density();
         }
       }
-
-      __update_Theta(sample);
     }
 
     prediction predict(vector<double> &attributes) {

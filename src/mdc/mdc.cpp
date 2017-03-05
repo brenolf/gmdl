@@ -69,7 +69,7 @@ int main() {
       cout << "DL diff: " << diff << endl << endl;
     }
 
-    classifier.train(sample);
+    classifier.train(sample, p.label);
   }
 
   cout << endl << endl << "ACC: " << (acc / i) << endl;
