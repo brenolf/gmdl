@@ -31,6 +31,9 @@ namespace mdc {
     vector<double> _Theta;
     double _alpha = 0.1;
 
+    double _MAX_THETA = 0.999999999;
+    double _MIN_THETA = pow(2, -32);
+
   private:
     void __update_Theta(pair<vector<double>, int> &sample) {
       double norm = __L_bar(sample.first, sample.second);
@@ -41,6 +44,9 @@ namespace mdc {
         double J = partial * log(_Theta.at(i)) * (1 - norm);
 
         _Theta.at(i) -= _alpha * -J;
+
+        _Theta.at(i) = min(_Theta.at(i), _MAX_THETA);
+        _Theta.at(i) = max(_Theta.at(i), _MIN_THETA);
       }
     }
 
@@ -89,7 +95,7 @@ namespace mdc {
     MDC(mdc::Dataset &dataset) {
       _classes = dataset.get_label_length();
       _dimension = dataset.get_dimension();
-      _Theta = vector<double>(_dimension, 0.9999999999);
+      _Theta = vector<double>(_dimension, _MAX_THETA);
 
       for (int c = 0; c < _classes; c++) {
         vector<kde_type> attrs(_dimension, kde_type(1));
@@ -114,6 +120,14 @@ namespace mdc {
 
     double get_omega() {
       return _omega;
+    }
+
+    void set_alpha(double alpha) {
+      _alpha = alpha;
+    }
+
+    double get_alpha() {
+      return _alpha;
     }
 
     void set_forgeting_factor(double forgeting_factor) {

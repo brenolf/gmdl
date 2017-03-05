@@ -16,11 +16,15 @@ int main() {
   string current_set = config["READ_SET"].get<string>();
   vector<string> classes = config["SETS"][current_set].get<vector<string>>();
 
+  double LEARNING_RATE = config["LEARNING_RATE"].get<double>();
+
   mdc::Dataset d(config["DATASETS"].get<string>());
   d.open_set(current_set, classes);
 
   pair<vector<double>, int> sample;
   mdc::MDC classifier(d);
+
+  classifier.set_alpha(LEARNING_RATE);
 
   double acc = 0;
   int i = 0;
