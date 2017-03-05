@@ -47,6 +47,12 @@ int main() {
         cout << d << " ";
       }
 
+      cout << endl << "Probs: ";
+
+      for (auto d : p.description_lengths) {
+        cout << (1 - d) << " ";
+      }
+
       cout << endl << "Theta: ";
 
       for (auto d : classifier.get_Theta()) {
