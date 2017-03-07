@@ -29,7 +29,10 @@ namespace mdc {
     double _forgeting_factor = 1;
     map<int, vector<kde_type>> _distributions;
     vector<double> _Theta;
-    double _alpha = 0.1;
+    vector<double> _gradients;
+
+    double _eta = 0.1; // learning rate
+    double _alpha = 0.9; // momentum
 
     double _MAX_THETA = 0.999999999;
     double _MIN_THETA = pow(2, -32);
@@ -43,7 +46,9 @@ namespace mdc {
         double partial = __L_hat_attribute(sample.first, prediction, i);
         double grad = partial * log(_Theta.at(i)) * (1 - norm) * (kronecker - norm);
 
-        _Theta.at(i) -= _alpha * -grad;
+        _gradients.at(i) = _eta * -grad + _alpha * _gradients.at(i);
+
+        _Theta.at(i) -= _gradients.at(i);
 
         _Theta.at(i) = min(_Theta.at(i), _MAX_THETA);
         _Theta.at(i) = max(_Theta.at(i), _MIN_THETA);
@@ -96,6 +101,7 @@ namespace mdc {
       _classes = dataset.get_label_length();
       _dimension = dataset.get_dimension();
       _Theta = vector<double>(_dimension, _MAX_THETA);
+      _gradients = vector<double>(_dimension, 0);
 
       for (int c = 0; c < _classes; c++) {
         vector<kde_type> attrs(_dimension, kde_type(1));
@@ -122,12 +128,12 @@ namespace mdc {
       return _omega;
     }
 
-    void set_alpha(double alpha) {
-      _alpha = alpha;
+    void set_learning_rate(double eta) {
+      _eta = eta;
     }
 
-    double get_alpha() {
-      return _alpha;
+    void set_momentum(double alpha) {
+      _alpha = alpha;
     }
 
     void set_forgeting_factor(double forgeting_factor) {

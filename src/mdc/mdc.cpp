@@ -17,6 +17,7 @@ int main() {
   vector<string> classes = config["SETS"][current_set].get<vector<string>>();
 
   double LEARNING_RATE = config["LEARNING_RATE"].get<double>();
+  double MOMENTUM = config["MOMENTUM"].get<double>();
 
   mdc::Dataset d(config["DATASETS"].get<string>());
   d.open_set(current_set, classes);
@@ -24,7 +25,8 @@ int main() {
   pair<vector<double>, int> sample;
   mdc::MDC classifier(d);
 
-  classifier.set_alpha(LEARNING_RATE);
+  classifier.set_learning_rate(LEARNING_RATE);
+  classifier.set_momentum(MOMENTUM);
 
   double acc = 0;
   int i = 0;
