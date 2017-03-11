@@ -5,7 +5,6 @@
 #include <map>
 #include <math.h>
 #include <random>
-#include <limits>
 
 #include "kde/okde.h"
 #include "kde/explanation.h"
@@ -91,7 +90,7 @@ namespace mdc {
       S += (variance * xokdepp::matrix_type::Ones(_dimension, _dimension));
 
       if (S.determinant() == 0) {
-        return numeric_limits<double>::infinity();
+        return INFINITY;
       }
 
       xokdepp::vector_type x(_dimension);
@@ -170,16 +169,22 @@ namespace mdc {
     vector<double> get_distances(vector<double> &attributes) {
       vector<double> S(_classes);
 
-      double S_total = 0;
+      S[0] = _get_distance_to_prototype(attributes, 0);
 
-      for (int c = 0; c < _classes; c++) {
+      double S_min = S[0];
+      double S_max = S[0];
+
+      for (int c = 1; c < _classes; c++) {
         S[c] = _get_distance_to_prototype(attributes, c);
-        S_total += isinf(S[c]) ? 0 : S[c];
+
+        S_min = min(S_min, S[c]);
+        S_max = max(S_max, S[c]);
       }
 
       for (int c = 0; c < _classes; c++) {
-        S[c] = isinf(S[c]) ? 1 : -log2(0.5 * (1 - (S[c] / S_total)));
-        S[c] = isinf(S[c]) ? 1 : S[c];
+        double normalized = (S[c] - S_min) / (S_max - S_min);
+
+        S[c] = isinf(S[c]) ? 1 : -log2(0.5 * (1 - normalized + _omega));
         S[c] = pow(S[c], _tau);
       }
 
