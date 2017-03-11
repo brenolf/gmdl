@@ -5,6 +5,7 @@
 #include <map>
 #include <math.h>
 #include <random>
+#include <limits>
 
 #include "kde/okde.h"
 #include "kde/explanation.h"
@@ -28,11 +29,13 @@ namespace mdc {
     double _omega = pow(2, -32);
     double _forgeting_factor = 1;
     map<int, vector<kde_type>> _distributions;
+    map<int, kde_type> _class_distributions;
     vector<double> _Theta;
     vector<double> _gradients;
 
     double _eta = 0.1; // learning rate
     double _alpha = 0.9; // momentum
+    double _tau = 1; // class prototype distance impact
 
     double _MAX_THETA = 0.999999999;
     double _MIN_THETA = pow(2, -32);
@@ -55,6 +58,51 @@ namespace mdc {
       }
     }
 
+    double _get_distance_to_prototype(vector<double> &attributes, int class_index) {
+      const kde_type &pdf = _class_distributions.at(class_index);
+      const double SIZE = pdf.size();
+
+      double variance = 0;
+
+      xokdepp::vector_type mu_bar(pdf.weight(0) * pdf.component(0).mean());
+
+      for (int i = 1; i < SIZE; i++) {
+        mu_bar += (pdf.weight(i) * pdf.component(i).mean());
+      }
+
+      for (int i = 0; i < SIZE; i++) {
+        variance += pdf.weight(i) *
+        (
+          (pdf.component(i).mean() - mu_bar) *
+          (pdf.component(i).mean() - mu_bar).transpose()
+        )(0);
+      }
+
+      xokdepp::matrix_type S = xokdepp::matrix_type::Zero(_dimension, _dimension);
+      S.diagonal() = pdf.weight(0) * pdf.component(0).covariance();
+
+      for (int i = 1; i < SIZE; i++) {
+        xokdepp::matrix_type S_prime = xokdepp::matrix_type::Zero(_dimension, _dimension);
+        S_prime.diagonal() = pdf.weight(i) * pdf.component(i).covariance();
+
+        S += S_prime;
+      }
+
+      S += (variance * xokdepp::matrix_type::Ones(_dimension, _dimension));
+
+      if (S.determinant() == 0) {
+        return numeric_limits<double>::infinity();
+      }
+
+      xokdepp::vector_type x(_dimension);
+
+      for (int attr = 0; attr < _dimension; attr++) {
+        x[attr] = attributes.at(attr);
+      }
+
+      return sqrt((x - mu_bar).transpose() * S.inverse() * (x - mu_bar));
+    }
+
     double __L_hat_attribute(vector<double> &attributes, int class_index, int attr) {
       xokdepp::vector_type sample(1);
       sample << attributes.at(attr);
@@ -72,28 +120,30 @@ namespace mdc {
       return pow(ceil(-log2(density)), _Theta.at(attr));
     }
 
-    double __L_hat(vector<double> &attributes, int class_index) {
+    double __L_hat(vector<double> &attributes, int class_index, vector<double> &S) {
       double DL = 0;
 
       for (int attr = 0; attr < _dimension; attr++) {
         DL += __L_hat_attribute(attributes, class_index, attr);
       }
 
-      return max(DL, 0.0);
+      return max(0.0, DL * S[class_index]);
     }
 
-    double __L_total(vector<double> &attributes) {
+    double __L_total(vector<double> &attributes, vector<double> &distances) {
       double DL = 0;
 
       for (int c = 0; c < _classes; c++) {
-        DL += __L_hat(attributes, c);
+        DL += __L_hat(attributes, c, distances);
       }
 
       return DL;
     }
 
     double __L_bar(vector<double> &attributes, int class_index) {
-      return __L_hat(attributes, class_index) / __L_total(attributes);
+      vector<double> S = get_distances(attributes);
+
+      return __L_hat(attributes, class_index, S) / __L_total(attributes, S);
     }
 
   public:
@@ -107,6 +157,7 @@ namespace mdc {
         vector<kde_type> attrs(_dimension, kde_type(1));
 
         _distributions.insert(pair<int, vector<kde_type>>(c, attrs));
+        _class_distributions.insert(pair<int, kde_type>(c, kde_type(_dimension)));
       }
 
       pair<vector<double>, int> sample;
@@ -114,6 +165,25 @@ namespace mdc {
       while (dataset.training_samples(sample)) {
         train(sample);
       }
+    }
+
+    vector<double> get_distances(vector<double> &attributes) {
+      vector<double> S(_classes);
+
+      double S_total = 0;
+
+      for (int c = 0; c < _classes; c++) {
+        S[c] = _get_distance_to_prototype(attributes, c);
+        S_total += isinf(S[c]) ? 0 : S[c];
+      }
+
+      for (int c = 0; c < _classes; c++) {
+        S[c] = isinf(S[c]) ? 1 : -log2(0.5 * (1 - (S[c] / S_total)));
+        S[c] = isinf(S[c]) ? 1 : S[c];
+        S[c] = pow(S[c], _tau);
+      }
+
+      return S;
     }
 
     vector<double> &get_Theta() {
@@ -124,8 +194,8 @@ namespace mdc {
       _omega = omega;
     }
 
-    double get_omega() {
-      return _omega;
+    void set_prototype_distance_coef(double tau) {
+      _tau = tau;
     }
 
     void set_learning_rate(double eta) {
@@ -142,6 +212,7 @@ namespace mdc {
       for (int c = 0; c < _classes; c++) {
         for (int attr = 0; attr < _dimension; attr++) {
           _distributions.at(c).at(attr).set_forg(forgeting_factor);
+          _class_distributions.at(c).set_forg(forgeting_factor);
         }
       }
     }
@@ -156,6 +227,19 @@ namespace mdc {
     }
 
     void train(pair<vector<double>, int> &sample) {
+      xokdepp::vector_type vectorized_class_sample(_dimension);
+
+      for (int attr = 0; attr < _dimension; attr++) {
+        vectorized_class_sample[attr] = sample.first.at(attr);
+      }
+
+      kde_type &class_pdf = _class_distributions.at(sample.second);
+      class_pdf.add_sample(vectorized_class_sample);
+
+      if (class_pdf.size() >= 3) {
+        class_pdf.estimate_kernel_density();
+      }
+
       for (int attr = 0; attr < _dimension; attr++) {
         xokdepp::vector_type vectorized_sample(1);
         vectorized_sample << sample.first.at(attr);

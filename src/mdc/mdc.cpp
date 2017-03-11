@@ -18,6 +18,7 @@ int main() {
 
   double LEARNING_RATE = config["LEARNING_RATE"].get<double>();
   double MOMENTUM = config["MOMENTUM"].get<double>();
+  double PROTOTYPE_DISTANCE_COEFFICIENT = config["PROTOTYPE_DISTANCE_COEFFICIENT"].get<double>();
 
   mdc::Dataset d(config["DATASETS"].get<string>());
   d.open_set(current_set, classes);
@@ -27,6 +28,7 @@ int main() {
 
   classifier.set_learning_rate(LEARNING_RATE);
   classifier.set_momentum(MOMENTUM);
+  classifier.set_prototype_distance_coef(PROTOTYPE_DISTANCE_COEFFICIENT);
 
   double acc = 0;
   int i = 0;
@@ -62,6 +64,12 @@ int main() {
       cout << endl << "Theta: ";
 
       for (auto d : classifier.get_Theta()) {
+        cout << d << " ";
+      }
+
+      cout << endl << "S: ";
+
+      for (auto d : classifier.get_distances(sample.first)) {
         cout << d << " ";
       }
 

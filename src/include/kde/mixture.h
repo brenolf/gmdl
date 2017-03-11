@@ -175,9 +175,9 @@ namespace xokdepp {
       return _components[index].mean();
     }
 
-//    const matrix_type &covariance(size_t index) const {
-//      return _components[index].covariance();
-//    }
+   const matrix_type &covariance(size_t index) const {
+     return _components[index].covariance();
+   }
 
     data_type weight(size_t index) const {
       return _weights[index];
