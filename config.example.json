@@ -3,6 +3,7 @@
   "DATASETS": "/path/to/data",
   "LEARNING_RATE": 0.0,
   "MOMENTUM": 0.0,
+  "PROTOTYPE_DISTANCE_COEFFICIENT": 0.0,
   "SETS": {
     "iris": ["Iris-setosa", "Iris-versicolor", "Iris-virginica"],
     "wdbc": ["M", "B"]
