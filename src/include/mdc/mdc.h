@@ -42,7 +42,7 @@ namespace mdc {
 
   private:
     void __update_Theta(pair<vector<double>, int> &sample, int prediction) {
-      double norm = __L_bar(sample.first, prediction);
+      double norm = __L(sample.first, prediction);
       int kronecker = (prediction == sample.second) ? 1 : 0;
 
       for (int i = 0; i < _dimension; i++) {
@@ -140,7 +140,7 @@ namespace mdc {
       return DL;
     }
 
-    double __L_bar(vector<double> &attributes, int class_index) {
+    double __L(vector<double> &attributes, int class_index) {
       vector<double> S = get_distances(attributes);
 
       return __L_hat(attributes, class_index, S) / __L_total(attributes, S);
@@ -258,7 +258,7 @@ namespace mdc {
       prediction p;
 
       for (int c = 0; c < _classes; c++) {
-        p.description_lengths.push_back(__L_bar(attributes, c));
+        p.description_lengths.push_back(__L(attributes, c));
       }
 
       double min = INFINITY;
