@@ -63,6 +63,10 @@ namespace mdc {
 
       double variance = 0;
 
+      if (SIZE == 0) {
+        return INFINITY;
+      }
+
       xokdepp::vector_type mu_bar(pdf.weight(0) * pdf.component(0).mean());
 
       for (int i = 1; i < SIZE; i++) {
