@@ -26,6 +26,7 @@ namespace mdc {
     int _classes;
     int _dimension;
     double _omega = pow(2, -32);
+    double _beta = pow(2, -32);
     double _forgeting_factor = 1;
     map<int, vector<kde_type>> _distributions;
     map<int, kde_type> _class_distributions;
@@ -188,7 +189,7 @@ namespace mdc {
       for (int c = 0; c < _classes; c++) {
         double normalized = (S[c] - S_min) / (S_max - S_min);
 
-        S[c] = isinf(S[c]) ? 1 : -log2(0.5 * (1 - normalized + _omega));
+        S[c] = isinf(S[c]) ? 1 : -log2(0.5 * (1 - normalized + _beta));
         S[c] = pow(S[c], _tau);
       }
 
@@ -203,7 +204,11 @@ namespace mdc {
       _omega = omega;
     }
 
-    void set_prototype_distance_coef(double tau) {
+    void set_beta(double beta) {
+      _beta = beta;
+    }
+
+    void set_tau(double tau) {
       _tau = tau;
     }
 
@@ -219,9 +224,10 @@ namespace mdc {
       _forgeting_factor = forgeting_factor;
 
       for (int c = 0; c < _classes; c++) {
+        _class_distributions.at(c).set_forg(forgeting_factor);
+
         for (int attr = 0; attr < _dimension; attr++) {
           _distributions.at(c).at(attr).set_forg(forgeting_factor);
-          _class_distributions.at(c).set_forg(forgeting_factor);
         }
       }
     }

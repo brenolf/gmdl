@@ -18,7 +18,10 @@ int main() {
 
   double LEARNING_RATE = config["LEARNING_RATE"].get<double>();
   double MOMENTUM = config["MOMENTUM"].get<double>();
-  double PROTOTYPE_DISTANCE_COEFFICIENT = config["PROTOTYPE_DISTANCE_COEFFICIENT"].get<double>();
+  double TAU = config["TAU"].get<double>();
+  double BETA = config["BETA"].get<double>();
+  double OMEGA = config["OMEGA"].get<double>();
+  double FORGETTING_FACTOR = config["FORGETTING_FACTOR"].get<double>();
 
   mdc::Dataset d(config["DATASETS"].get<string>());
   d.open_set(current_set, classes);
@@ -28,7 +31,10 @@ int main() {
 
   classifier.set_learning_rate(LEARNING_RATE);
   classifier.set_momentum(MOMENTUM);
-  classifier.set_prototype_distance_coef(PROTOTYPE_DISTANCE_COEFFICIENT);
+  classifier.set_tau(TAU);
+  classifier.set_beta(BETA);
+  classifier.set_omega(OMEGA);
+  classifier.set_forgeting_factor(FORGETTING_FACTOR);
 
   double acc = 0;
   int i = 0;
