@@ -39,6 +39,8 @@ int main() {
   double acc = 0;
   int i = 0;
 
+  xokdepp::matrix_type confusion = xokdepp::matrix_type::Zero(classes.size(), classes.size());
+
   while (d.testing_samples(sample)) {
     i++;
 
@@ -85,10 +87,14 @@ int main() {
       cout << "DL diff: " << diff << endl << endl;
     }
 
+    confusion(sample.second, p.label)++;
+
     classifier.train(sample, p.label);
   }
 
-  cout << endl << endl << "ACC: " << (acc / i) << endl;
+  cout << endl << endl << "ACC: " << (acc / i) << endl << endl;
+
+  cout << "M. CONFUSAO" << endl << confusion << endl;
 
   return 0;
 }
