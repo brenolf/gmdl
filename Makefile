@@ -19,7 +19,7 @@ CXXFLAGS+= -DNDEBUG -DEIGEN_NO_DEBUG -msse2 -msse3 -mssse3 -msse4 -msse4.1 -msse
 CXXFLAGS+= -fopenmp
 CXXFLAGS+= -finline -fbuiltin #-fexpensive-optimizations
 
-CXX = time clang++
+CXX = time clang-omp++
 
 .PHONY: all
 all: $(PROGRAMS_MDC)
