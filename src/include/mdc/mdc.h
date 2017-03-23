@@ -201,11 +201,11 @@ namespace mdc {
     }
 
     void set_omega(double omega) {
-      _omega = omega;
+      _omega = pow(2, -omega);
     }
 
     void set_beta(double beta) {
-      _beta = beta;
+      _beta = pow(2, -beta);
     }
 
     void set_tau(double tau) {
@@ -230,10 +230,6 @@ namespace mdc {
           _distributions.at(c).at(attr).set_forg(forgeting_factor);
         }
       }
-    }
-
-    double get_forgeting_factor() {
-      return _forgeting_factor;
     }
 
     void train(pair<vector<double>, int> &sample, int prediction) {
@@ -276,10 +272,10 @@ namespace mdc {
         p.description_lengths.push_back(__L(attributes, c));
       }
 
-      double min = INFINITY;
-      p.label = -1;
+      double min = p.description_lengths[0];
+      p.label = 0;
 
-      for (int c = 0; c < _classes; c++) {
+      for (int c = 1; c < _classes; c++) {
         if (p.description_lengths[c] < min) {
           min = p.description_lengths[c];
           p.label = c;

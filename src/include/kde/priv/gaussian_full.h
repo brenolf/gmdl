@@ -117,7 +117,7 @@ namespace xokdepp {
         if (eig_vals[i] < min_e)
           min_e = eig_vals[i];
       }
-      Eigen::ArrayXd e(dims);
+      Eigen::ArrayXd e((int) dims);
       for (int i = 0; i < dims; i++) {
         e[i] = eig_vals[i] / max_e;
       }

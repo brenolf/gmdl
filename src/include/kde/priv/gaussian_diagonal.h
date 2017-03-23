@@ -117,7 +117,7 @@ namespace xokdepp {
         if (eig_vals[i] < min_e)
           min_e = eig_vals[i];
       }
-      Eigen::ArrayXd e(dims);
+      Eigen::ArrayXd e((int) dims);
       for (int i = 0; i < dims; i++) {
         e[i] = eig_vals[i] / max_e;
       }
@@ -169,9 +169,9 @@ namespace xokdepp {
       }
 
       Eigen::ArrayXd ref_eig_vals = _covariance.array();
-//std::cout << "COMPUTE INVERSE" << std::endl; 
-//std::cout << "_covariance" << std::endl << _covariance << std::endl; 
-//std::cout << "ref_eig_vals" << std::endl << ref_eig_vals << std::endl; 
+//std::cout << "COMPUTE INVERSE" << std::endl;
+//std::cout << "_covariance" << std::endl << _covariance << std::endl;
+//std::cout << "ref_eig_vals" << std::endl << ref_eig_vals << std::endl;
       while (!is_positive_definite(ref_eig_vals)) {
         regularize_covariance_okde_approach(_covariance, ref_eig_vals); //preserve original covariance data
         _inverse_is_dirty = true;

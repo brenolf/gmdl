@@ -9,14 +9,17 @@ INCLUDES= -I. -Isrc/include
 INCLUDES+= -I/usr/local/include
 INCLUDES+= -I/usr/local/include/eigen3
 INCLUDES+= -I/usr/include/eigen3
+INCLUDES+= -I/usr/lib/llvm-3.8/include
+INCLUDES+= -I/usr/lib/clang/3.8.0/include/
 
-CXXFLAGS = -std=c++1y -m64 -ggdb -O3 -ffast-math $(INCLUDES) -fPIC -fpic -Wall -Wextra -Wno-sign-compare -Wno-overloaded-virtual
-
+CXXFLAGS = -std=c++11 -m64 -ggdb -O3 $(INCLUDES) -fPIC -fpic -Wall -Wextra -Wno-sign-compare -Wno-overloaded-virtual
+# CXXFLAGS+= -lclang-3.8 -lstdc++
+# CXXFLAGS+= -ffast-math
 CXXFLAGS+= -DNDEBUG -DEIGEN_NO_DEBUG -msse2 -msse3 -mssse3 -msse4 -msse4.1 -msse4.2
 CXXFLAGS+= -fopenmp
 CXXFLAGS+= -finline -fbuiltin #-fexpensive-optimizations
 
-CXX = time clang-omp++
+CXX = time clang++
 
 .PHONY: all
 all: $(PROGRAMS_MDC)
