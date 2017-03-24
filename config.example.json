@@ -7,6 +7,7 @@
   "BETA": 32,
   "OMEGA": 32,
   "FORGETTING_FACTOR": 1,
+  "LABEL": -1,
   "SETS": {
     "iris": ["Iris-setosa", "Iris-versicolor", "Iris-virginica"],
     "wdbc": ["M", "B"]

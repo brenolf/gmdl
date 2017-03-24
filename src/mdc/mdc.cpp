@@ -24,6 +24,7 @@ int main() {
   double FORGETTING_FACTOR = config["FORGETTING_FACTOR"].get<double>();
 
   mdc::Dataset d(config["DATASETS"].get<string>());
+  d.set_label_column(config["LABEL"].get<int>());
   d.open_set(current_set, classes);
 
   pair<vector<double>, int> sample;
@@ -92,7 +93,8 @@ int main() {
     classifier.train(sample, p.label);
   }
 
-  cout << endl << endl << "ACC: " << (acc / i) << endl << endl;
+  cout << endl << endl << "ACC: " << (acc / i) << endl;
+  cout << endl;
 
   cout << "M. CONFUSAO" << endl << confusion << endl;
 
