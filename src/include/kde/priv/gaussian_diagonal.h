@@ -217,6 +217,8 @@ namespace xokdepp {
     	matrix_type C = matrix_type::Zero(_dims, _dims);
       C.diagonal() = covariance + vector_type::Constant(_dims, xokdepp::epsilon_whitening);
 
+      // cout << "DEBUG:COVARIANCE " << covariance << endl << endl;
+
       Eigen::EigenSolver<matrix_type> es(C, true);
       Eigen::ArrayXd eig_vals = es.eigenvalues().real().array();
       matrix_type V = es.eigenvectors().real();

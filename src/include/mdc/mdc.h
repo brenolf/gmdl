@@ -27,16 +27,19 @@ namespace mdc {
     int _dimension;
     double _omega = pow(2, -32);
     double _beta = pow(2, -32);
+    double _sigma = 1;
     double _forgeting_factor = 1;
     map<int, vector<kde_type>> _distributions;
     map<int, kde_type> _class_distributions;
     vector<double> _Theta;
     vector<double> _gradients;
+    mt19937 _gen;
 
     double _eta = 0.1; // learning rate
     double _alpha = 0.9; // momentum
     double _delta = 1; // class prototype distance impact
 
+    double _SEED = 123456789;
     double _MAX_THETA = 0.999999999;
     double _MIN_THETA = pow(2, -32);
 
@@ -156,6 +159,7 @@ namespace mdc {
       _dimension = dataset.get_dimension();
       _Theta = vector<double>(_dimension, _MAX_THETA);
       _gradients = vector<double>(_dimension, 0);
+      _gen = mt19937(_SEED);
 
       for (int c = 0; c < _classes; c++) {
         vector<kde_type> attrs(_dimension, kde_type(1));
@@ -212,6 +216,10 @@ namespace mdc {
       _delta = delta;
     }
 
+    void set_sigma(double sigma) {
+      _sigma = sigma;
+    }
+
     void set_learning_rate(double eta) {
       _eta = eta;
     }
@@ -240,8 +248,10 @@ namespace mdc {
     void train(pair<vector<double>, int> &sample) {
       xokdepp::vector_type vectorized_class_sample(_dimension);
 
+      normal_distribution<> noise(0, _delta);
+
       for (int attr = 0; attr < _dimension; attr++) {
-        vectorized_class_sample[attr] = sample.first.at(attr);
+        vectorized_class_sample[attr] = sample.first.at(attr) + noise(_gen);
       }
 
       kde_type &class_pdf = _class_distributions.at(sample.second);
@@ -253,7 +263,7 @@ namespace mdc {
 
       for (int attr = 0; attr < _dimension; attr++) {
         xokdepp::vector_type vectorized_sample(1);
-        vectorized_sample << sample.first.at(attr);
+        vectorized_sample << vectorized_class_sample[attr];
 
         kde_type &pdf = _distributions.at(sample.second).at(attr);
 

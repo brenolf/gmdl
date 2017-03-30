@@ -22,6 +22,7 @@ int main() {
   double BETA = config["BETA"].get<double>();
   double OMEGA = config["OMEGA"].get<double>();
   double FORGETTING_FACTOR = config["FORGETTING_FACTOR"].get<double>();
+  double SIGMA = config["SIGMA"].get<double>();
 
   mdc::Dataset d(config["DATASETS"].get<string>());
   d.set_label_column(config["LABEL"].get<int>());
@@ -36,6 +37,7 @@ int main() {
   classifier.set_beta(BETA);
   classifier.set_omega(OMEGA);
   classifier.set_forgeting_factor(FORGETTING_FACTOR);
+  classifier.set_sigma(SIGMA);
 
   double acc = 0;
   int i = 0;

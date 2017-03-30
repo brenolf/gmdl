@@ -4,6 +4,7 @@
   "LEARNING_RATE": 0.0,
   "MOMENTUM": 0.0,
   "DELTA": 0.0,
+  "SIGMA": 1.0,
   "BETA": 32,
   "OMEGA": 32,
   "FORGETTING_FACTOR": 1,
