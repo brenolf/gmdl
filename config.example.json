@@ -3,7 +3,7 @@
   "DATASETS": "/path/to/data",
   "LEARNING_RATE": 0.0,
   "MOMENTUM": 0.0,
-  "TAU": 0.0,
+  "DELTA": 0.0,
   "BETA": 32,
   "OMEGA": 32,
   "FORGETTING_FACTOR": 1,

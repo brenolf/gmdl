@@ -35,7 +35,7 @@ namespace mdc {
 
     double _eta = 0.1; // learning rate
     double _alpha = 0.9; // momentum
-    double _tau = 1; // class prototype distance impact
+    double _delta = 1; // class prototype distance impact
 
     double _MAX_THETA = 0.999999999;
     double _MIN_THETA = pow(2, -32);
@@ -190,7 +190,7 @@ namespace mdc {
         double normalized = (S[c] - S_min) / (S_max - S_min);
 
         S[c] = isinf(S[c]) ? 1 : -log2(0.5 * (1 - normalized + _beta));
-        S[c] = pow(S[c], _tau);
+        S[c] = pow(S[c], _delta);
       }
 
       return S;
@@ -208,8 +208,8 @@ namespace mdc {
       _beta = pow(2, -beta);
     }
 
-    void set_tau(double tau) {
-      _tau = tau;
+    void set_delta(double delta) {
+      _delta = delta;
     }
 
     void set_learning_rate(double eta) {

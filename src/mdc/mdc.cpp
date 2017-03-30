@@ -18,7 +18,7 @@ int main() {
 
   double LEARNING_RATE = config["LEARNING_RATE"].get<double>();
   double MOMENTUM = config["MOMENTUM"].get<double>();
-  double TAU = config["TAU"].get<double>();
+  double DELTA = config["DELTA"].get<double>();
   double BETA = config["BETA"].get<double>();
   double OMEGA = config["OMEGA"].get<double>();
   double FORGETTING_FACTOR = config["FORGETTING_FACTOR"].get<double>();
@@ -32,7 +32,7 @@ int main() {
 
   classifier.set_learning_rate(LEARNING_RATE);
   classifier.set_momentum(MOMENTUM);
-  classifier.set_tau(TAU);
+  classifier.set_delta(DELTA);
   classifier.set_beta(BETA);
   classifier.set_omega(OMEGA);
   classifier.set_forgeting_factor(FORGETTING_FACTOR);
