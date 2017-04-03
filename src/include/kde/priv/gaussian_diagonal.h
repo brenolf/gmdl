@@ -189,6 +189,7 @@ namespace xokdepp {
         std::cerr << "gaussian::compute_determinant_and_inverse::NaN detected" << std::endl;
         //throw std::exception();
         _covariance_log_determinant = std::numeric_limits<data_type>::infinity(); //FIXME this needs to be tested
+        exit(1);
       }
 
       if (_covariance_log_determinant == std::numeric_limits<data_type>::infinity()
@@ -218,6 +219,10 @@ namespace xokdepp {
       C.diagonal() = covariance + vector_type::Constant(_dims, xokdepp::epsilon_whitening);
 
       // cout << "DEBUG:COVARIANCE " << covariance << endl << endl;
+
+      // cout << "cov" << _dims << endl;
+      // cout << covariance << endl;
+      // cout << C << endl << endl;
 
       Eigen::EigenSolver<matrix_type> es(C, true);
       Eigen::ArrayXd eig_vals = es.eigenvalues().real().array();

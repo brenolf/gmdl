@@ -33,9 +33,9 @@ namespace mdc {
     map<int, kde_type> _class_distributions;
     vector<double> _Theta;
     vector<double> _gradients;
-    vector<double> _means;
-    vector<double> _variances_acc;
-    long long _SAMPLES;
+    map<int, vector<double>> _means;
+    map<int, vector<double>> _variances_acc;
+    map<int, vector<long long>> _SAMPLES;
     mt19937 _gen;
 
     double _eta = 0.1; // learning rate
@@ -163,12 +163,13 @@ namespace mdc {
       _Theta = vector<double>(_dimension, _MAX_THETA);
       _gradients = vector<double>(_dimension, 0);
       _gen = mt19937(_SEED);
-      _SAMPLES = 0;
-      _means = vector<double>(_dimension, 0);
-      _variances_acc = vector<double>(_dimension, 0);
 
       for (int c = 0; c < _classes; c++) {
         vector<kde_type> attrs(_dimension, kde_type(1));
+
+        _SAMPLES.insert(pair<int, vector<long long>>(c, vector<long long>(_dimension, 0)));
+        _means.insert(pair<int, vector<double>>(c, vector<double>(_dimension, 0)));
+        _variances_acc.insert(pair<int, vector<double>>(c, vector<double>(_dimension, 0)));
 
         _distributions.insert(pair<int, vector<kde_type>>(c, attrs));
         _class_distributions.insert(pair<int, kde_type>(c, kde_type(_dimension)));
@@ -256,17 +257,24 @@ namespace mdc {
 
       normal_distribution<> noise_distribution(0, _delta);
 
-      _SAMPLES++;
-
       for (int attr = 0; attr < _dimension; attr++) {
-        double delta = sample.first.at(attr) - _means[attr];
+        long long &SAMPLES = _SAMPLES.at(sample.second).at(attr);
+        double &MEAN = _means.at(sample.second).at(attr);
+        double &VAR_ACC = _variances_acc.at(sample.second).at(attr);
 
-        _means[attr] += delta / _SAMPLES;
-        _variances_acc[attr] += delta * delta;
+        SAMPLES++;
+
+        double delta = sample.first.at(attr) - MEAN;
+
+        MEAN += delta / SAMPLES;
+
+        double delta2 = sample.first.at(attr) - MEAN;
+
+        VAR_ACC += delta * delta2;
 
         double noise = 0;
 
-        if (_SAMPLES < 2 || (_variances_acc[attr] / (_SAMPLES - 1)) < xokdepp::MIN_BANDWIDTH) {
+        if (SAMPLES < 2 || (VAR_ACC / (SAMPLES - 1)) < xokdepp::MIN_BANDWIDTH) {
           noise = noise_distribution(_gen);
         }
 
