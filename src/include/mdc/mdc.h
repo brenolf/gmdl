@@ -33,6 +33,9 @@ namespace mdc {
     map<int, kde_type> _class_distributions;
     vector<double> _Theta;
     vector<double> _gradients;
+    vector<double> _means;
+    vector<double> _variances_acc;
+    long long _SAMPLES;
     mt19937 _gen;
 
     double _eta = 0.1; // learning rate
@@ -160,6 +163,9 @@ namespace mdc {
       _Theta = vector<double>(_dimension, _MAX_THETA);
       _gradients = vector<double>(_dimension, 0);
       _gen = mt19937(_SEED);
+      _SAMPLES = 0;
+      _means = vector<double>(_dimension, 0);
+      _variances_acc = vector<double>(_dimension, 0);
 
       for (int c = 0; c < _classes; c++) {
         vector<kde_type> attrs(_dimension, kde_type(1));
@@ -248,10 +254,23 @@ namespace mdc {
     void train(pair<vector<double>, int> &sample) {
       xokdepp::vector_type vectorized_class_sample(_dimension);
 
-      normal_distribution<> noise(0, _delta);
+      normal_distribution<> noise_distribution(0, _delta);
+
+      _SAMPLES++;
 
       for (int attr = 0; attr < _dimension; attr++) {
-        vectorized_class_sample[attr] = sample.first.at(attr) + noise(_gen);
+        double delta = sample.first.at(attr) - _means[attr];
+
+        _means[attr] += delta / _SAMPLES;
+        _variances_acc[attr] += delta * delta;
+
+        double noise = 0;
+
+        if (_SAMPLES < 2 || (_variances_acc[attr] / (_SAMPLES - 1)) < xokdepp::MIN_BANDWIDTH) {
+          noise = noise_distribution(_gen);
+        }
+
+        vectorized_class_sample[attr] = sample.first.at(attr) + noise;
       }
 
       kde_type &class_pdf = _class_distributions.at(sample.second);
