@@ -11,6 +11,7 @@ INCLUDES+= -I/usr/local/include/eigen3
 INCLUDES+= -I/usr/include/eigen3
 INCLUDES+= -I/usr/lib/llvm-3.8/include
 INCLUDES+= -I/usr/lib/clang/3.8.0/include/
+INCLUDES+= -I/usr/local/opt/llvm/include -fopenmp
 
 CXXFLAGS = -std=c++11 -m64 -ggdb -O3 $(INCLUDES) -fPIC -fpic -Wall -Wextra -Wno-sign-compare -Wno-overloaded-virtual
 # CXXFLAGS+= -lclang-3.8 -lstdc++
@@ -18,6 +19,8 @@ CXXFLAGS = -std=c++11 -m64 -ggdb -O3 $(INCLUDES) -fPIC -fpic -Wall -Wextra -Wno-
 CXXFLAGS+= -DNDEBUG -DEIGEN_NO_DEBUG -msse2 -msse3 -mssse3 -msse4 -msse4.1 -msse4.2
 CXXFLAGS+= -fopenmp
 CXXFLAGS+= -finline -fbuiltin #-fexpensive-optimizations
+
+LDFLAGS= -L/usr/local/opt/llvm/lib
 
 CXX = time clang-omp++
 
@@ -28,7 +31,7 @@ all: $(PROGRAMS_MDC)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 $(PROGRAMS_MDC): $(OFILES_CORE) $(OFILES_MDC)
-	$(CXX) -o $(PROGRAMS_MDC) $^ -fopenmp
+	$(CXX) -o $(PROGRAMS_MDC) $^ -fopenmp $(LDFLAGS)
 
 depend:
 	$(CXX) -MM $(CXXFLAGS) $(CXXFILES_MDC) >> .deps
