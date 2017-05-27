@@ -13,16 +13,16 @@ echo "$Cyan"'Downloading C++ headers\n'"$Color_Off";
 
 wget https://github.com/nlohmann/json/releases/download/v2.1.1/json.hpp --show-progress -qO /tmp/json.hpp;
 
-wget https://raw.githubusercontent.com/jarro2783/cxxopts/9db62cb338aeaed1fec5806f6b5d9781f5e19e4c/include/cxxopts.hpp --show-progress -qO /tmp/cxxopts.hpp;
+wget https://raw.githubusercontent.com/tanakh/cmdline/master/cmdline.h --show-progress -qO /tmp/cmdline.hpp;
 
 echo "$Cyan"'\nMaking headers available\n'"$Color_Off";
 
 if [[ "$OS" == "darwin" ]]; then
   mv /tmp/json.hpp /usr/local/include/json.hpp;
-  mv /tmp/cxxopts.hpp /usr/local/include/cxxopts.hpp;
+  mv /tmp/cmdline.hpp /usr/local/include/cmdline.hpp;
 else
   mv /tmp/json.hpp /usr/include/json.hpp;
-  mv /tmp/cxxopts.hpp /usr/include/cxxopts.hpp;
+  mv /tmp/cmdline.hpp /usr/include/cmdline.hpp;
 fi
 
 echo "$Cyan"'Installing libraries\n'"$Color_Off"
