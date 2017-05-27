@@ -207,6 +207,10 @@ namespace mdc {
       return S;
     }
 
+    int get_classes_length() {
+      return _classes;
+    }
+
     vector<double> &get_Theta() {
       return _Theta;
     }
