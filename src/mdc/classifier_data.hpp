@@ -6,6 +6,7 @@
 #include <iostream>
 #include <fstream>
 #include <json.hpp>
+#include <map>
 
 using namespace std;
 
@@ -14,37 +15,52 @@ typedef struct {
   mdc::Dataset *dataset;
 } ClassifierData;
 
-ClassifierData get_classifier_data() {
+typedef void (mdc::MDC::*FnPtr)(double);
+
+static const map<string, FnPtr> METAPARAMS = {
+  {"learning_rate", &mdc::MDC::set_learning_rate},
+  {"momentum", &mdc::MDC::set_momentum},
+  {"delta", &mdc::MDC::set_delta},
+  {"beta", &mdc::MDC::set_beta},
+  {"omega", &mdc::MDC::set_omega},
+  {"forgetting_factor", &mdc::MDC::set_forgeting_factor},
+  {"sigma", &mdc::MDC::set_sigma}
+};
+
+ClassifierData get_classifier_data(cmdline::parser *args) {
   std::ifstream config_file("./config.json");
   nlohmann::json config;
   config_file >> config;
 
   config_file.close();
 
-  string current_set = config["READ_SET"].get<string>();
-  vector<string> classes = config["SETS"][current_set].get<vector<string>>();
+  const string set = 
+    args->exist("set") ? 
+    args->get<string>("set") :
+    config["set"].get<string>();
 
-  double LEARNING_RATE = config["LEARNING_RATE"].get<double>();
-  double MOMENTUM = config["MOMENTUM"].get<double>();
-  double DELTA = config["DELTA"].get<double>();
-  double BETA = config["BETA"].get<double>();
-  double OMEGA = config["OMEGA"].get<double>();
-  double FORGETTING_FACTOR = config["FORGETTING_FACTOR"].get<double>();
-  double SIGMA = config["SIGMA"].get<double>();
+  const int label = 
+    args->exist("label") ? 
+    args->get<int>("label") :
+    config["label"].get<int>();
 
-  mdc::Dataset *d = new mdc::Dataset(config["DATASETS"].get<string>());
-  d->set_label_column(config["LABEL"].get<int>());
-  d->open_set(current_set, classes);
+  vector<string> classes = config["datasets"][set].get<vector<string>>();
+
+  mdc::Dataset *d = new mdc::Dataset(config["datasets_path"].get<string>());
+  d->set_label_column(label);
+  d->open_set(set, classes);
 
   mdc::MDC *classifier = new mdc::MDC(*d);
 
-  classifier->set_learning_rate(LEARNING_RATE);
-  classifier->set_momentum(MOMENTUM);
-  classifier->set_delta(DELTA);
-  classifier->set_beta(BETA);
-  classifier->set_omega(OMEGA);
-  classifier->set_forgeting_factor(FORGETTING_FACTOR);
-  classifier->set_sigma(SIGMA);
+  for (auto const &item : METAPARAMS) {
+    if (args->exist(item.first)) {
+      (classifier->*item.second)(args->get<double>(item.first));
+    } else if (!args->exist("inline")) {
+      try {
+        (classifier->*item.second)(config[item.first].get<double>());
+      } catch(...) {}
+    }
+  }
 
   return ClassifierData { classifier, d };
 }

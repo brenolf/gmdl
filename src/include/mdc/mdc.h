@@ -1,11 +1,20 @@
 #ifndef SRC_INCLUDE_MDC_H_
 #define SRC_INCLUDE_MDC_H_
 
+#define MDC_DEFAULT_OMEGA -32
+#define MDC_DEFAULT_BETA -32
+#define MDC_DEFAULT_SIGMA 1
+#define MDC_DEFAULT_F 1
+#define MDC_DEFAULT_ETA 0.01
+#define MDC_DEFAULT_ALPHA 0.9
+#define MDC_DEFAULT_DELTA 1
+
 #include <vector>
 #include <map>
 #include <math.h>
 #include <random>
 
+#include "dataset/dataset.h"
 #include "kde/okde.h"
 #include "kde/explanation.h"
 
@@ -25,8 +34,8 @@ namespace mdc {
   private:
     int _classes;
     int _dimension;
-    double _omega = pow(2, -32);
-    double _beta = pow(2, -32);
+    double _omega = pow(2, MDC_DEFAULT_OMEGA);
+    double _beta = pow(2, MDC_DEFAULT_BETA);
     double _sigma = 1;
     double _forgeting_factor = 1;
     map<int, vector<kde_type>> _distributions;
@@ -38,9 +47,9 @@ namespace mdc {
     map<int, vector<long long>> _SAMPLES;
     mt19937 _gen;
 
-    double _eta = 0.1; // learning rate
-    double _alpha = 0.9; // momentum
-    double _delta = 1; // class prototype distance impact
+    double _eta = MDC_DEFAULT_ETA; // learning rate
+    double _alpha = MDC_DEFAULT_ALPHA; // momentum
+    double _delta = MDC_DEFAULT_ETA; // class prototype distance impact
 
     double _SEED = 123456789;
     double _MAX_THETA = 0.999999999;
@@ -259,7 +268,7 @@ namespace mdc {
     void train(pair<vector<double>, int> &sample) {
       xokdepp::vector_type vectorized_class_sample(_dimension);
 
-      normal_distribution<> noise_distribution(0, _delta);
+      normal_distribution<> noise_distribution(0, _sigma);
 
       for (int attr = 0; attr < _dimension; attr++) {
         long long &SAMPLES = _SAMPLES.at(sample.second).at(attr);
