@@ -10,7 +10,7 @@ int main(int argc, char *argv[]) {
   double acc = 0;
   int i = 0;
 
-  xokdepp::matrix_type confusion = xokdepp::matrix_type::Zero(length, length);
+  Eigen::MatrixXf confusion = Eigen::MatrixXf::Zero(length, length);
 
   pair<vector<double>, int> sample;
 

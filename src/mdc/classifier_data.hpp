@@ -1,8 +1,8 @@
 #ifndef INCLUDE_MDC_CLASSIFIER  
 #define INCLUDE_MDC_CLASSIFIER  
 
-#include "dataset/dataset.h"
-#include "mdc/mdc.h"
+#include "dataset/dataset.hpp"
+#include "mdc/mdc.hpp"
 #include <iostream>
 #include <fstream>
 #include <json.hpp>

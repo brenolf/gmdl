@@ -2,7 +2,7 @@
 #define INCLUDE_MDC_ARGS
 
 #include <cmdline.hpp>
-#include "mdc/mdc.h"
+#include "mdc/mdc.hpp"
 
 cmdline::parser *get_parser(int argc, char *argv[]) {
   cmdline::parser *args = new cmdline::parser();

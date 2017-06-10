@@ -14,7 +14,7 @@
 #include <math.h>
 #include <random>
 
-#include "dataset/dataset.h"
+#include "dataset/dataset.hpp"
 #include "kde/okde.h"
 #include "kde/explanation.h"
 
