@@ -44,9 +44,14 @@ ClassifierData get_classifier_data(cmdline::parser *args) {
     args->get<int>("label") :
     config["label"].get<int>();
 
+  const string datasets_path = 
+    args->exist("path") ? 
+    args->get<string>("path") :
+    config["datasets_path"].get<string>();
+
   vector<string> classes = config["datasets"][set].get<vector<string>>();
 
-  mdc::Dataset *d = new mdc::Dataset(config["datasets_path"].get<string>());
+  mdc::Dataset *d = new mdc::Dataset(datasets_path);
   d->set_label_column(label);
   d->open_set(set, classes);
 

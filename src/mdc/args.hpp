@@ -41,6 +41,13 @@ cmdline::parser *get_parser(int argc, char *argv[]) {
     false
   );
 
+  args->add<string>(
+    "path",
+    'p',
+    "the path in which to look for datasets",
+    false
+  );
+
   args->add<double>(
     "learning_rate",
     '\0',
