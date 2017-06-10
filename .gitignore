@@ -39,3 +39,4 @@
 
 data/
 config.json
+.DS_Store
