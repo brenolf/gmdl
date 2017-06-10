@@ -49,7 +49,7 @@ namespace mdc {
 
     double _eta = MDC_DEFAULT_ETA; // learning rate
     double _alpha = MDC_DEFAULT_ALPHA; // momentum
-    double _delta = MDC_DEFAULT_ETA; // class prototype distance impact
+    double _delta = MDC_DEFAULT_DELTA; // class prototype distance impact
 
     double _SEED = 123456789;
     double _MAX_THETA = 0.999999999;
@@ -192,7 +192,11 @@ namespace mdc {
     }
 
     vector<double> get_distances(vector<double> &attributes) {
-      vector<double> S(_classes);
+      vector<double> S(_classes, 1);
+
+      if (_delta == 0) {
+        return S;
+      }
 
       S[0] = _get_distance_to_prototype(attributes, 0);
 
