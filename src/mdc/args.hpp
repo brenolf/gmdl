@@ -21,6 +21,12 @@ cmdline::parser *get_parser(int argc, char *argv[]) {
     "omits logging when classification fails"
   );
 
+  args->add(
+    "fmeasure",
+    'f',
+    "outputs f-measure instead of confusion matrix"
+  );
+
   args->add<int>(
     "label",
     '\0',
