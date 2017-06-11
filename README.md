@@ -15,7 +15,7 @@ Run `make` and `./mdc.app` to run.
 ```
   -i, --inline               pass configurations parameters inline instead of reading json file
   -q, --quiet                omits logging when classification fails
-  -f, --fmeasure             outputs f-measure instead of confusion matrix
+  -f, --fscore             outputs f-measure instead of confusion matrix
       --label                the index of the column that should be considered the label (int [=0])
       --set                  the key to the set in the config file that should be read (string [=])
   -p, --path                 the path in which to look for datasets (string [=])

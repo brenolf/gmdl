@@ -49,11 +49,21 @@ ClassifierData get_classifier_data(cmdline::parser *args) {
     args->get<string>("path") :
     config["datasets_path"].get<string>();
 
-  vector<string> classes = config["datasets"][set].get<vector<string>>();
+  const string training = 
+    args->exist("training") ? 
+    args->get<string>("training") :
+    config["datasets"][set]["training"].get<string>();
+
+  const string testing = 
+    args->exist("testing") ? 
+    args->get<string>("testing") :
+    config["datasets"][set]["testing"].get<string>();
+
+  vector<string> classes = config["datasets"][set]["labels"].get<vector<string>>();
 
   mdc::Dataset *d = new mdc::Dataset(datasets_path);
   d->set_label_column(label);
-  d->open_set(set, classes);
+  d->open_sets(training, testing, classes);
 
   mdc::MDC *classifier = new mdc::MDC(*d);
 

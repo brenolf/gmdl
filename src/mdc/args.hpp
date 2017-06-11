@@ -22,9 +22,9 @@ cmdline::parser *get_parser(int argc, char *argv[]) {
   );
 
   args->add(
-    "fmeasure",
+    "fscore",
     'f',
-    "outputs f-measure instead of confusion matrix"
+    "outputs f-score instead of confusion matrix"
   );
 
   args->add<int>(
@@ -45,6 +45,20 @@ cmdline::parser *get_parser(int argc, char *argv[]) {
     "path",
     'p',
     "the path in which to look for datasets",
+    false
+  );
+
+  args->add<string>(
+    "training",
+    '\0',
+    "the name of the traning set",
+    false
+  );
+
+  args->add<string>(
+    "testing",
+    '\0',
+    "the name of the testing set",
     false
   );
 

@@ -1,7 +1,7 @@
 #include "./args.hpp"
 #include "./classifier_data.hpp"
 #include "./debugger.hpp"
-#include "./fmeasure.hpp"
+#include "./fscore.hpp"
 
 int main(int argc, char *argv[]) {
   cmdline::parser *args = get_parser(argc, argv);
@@ -34,9 +34,9 @@ int main(int argc, char *argv[]) {
   if (!args->exist("quiet")) {
     cout << endl << endl << "ACC: " << (acc / i) << endl << endl;
     cout << "M. CONFUSAO" << endl << confusion << endl << endl;
-    fmeasure(confusion);
-  } else if (args->exist("fmeasure")){
-    fmeasure(confusion);
+    fscore(confusion);
+  } else if (args->exist("fscore")){
+    fscore(confusion);
   } else {
     cout << confusion << endl;
   }

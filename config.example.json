@@ -8,9 +8,13 @@
   "forgetting_factor": 1,
   "label": -1,
   "set": "iris",
-  "datasets": "/path/to/data",
-  "datasets_path": {
-    "iris": ["Iris-setosa", "Iris-versicolor", "Iris-virginica"],
-    "wdbc": ["M", "B"]
+  "datasets_path": "/path/to/data/",
+  "datasets": {
+    "iris": {
+      "labels": ["Iris-setosa", "Iris-versicolor", "Iris-virginica"],
+      "testing": "iris.test",
+      "training": "iris.train"
+    }
   }
 }
+

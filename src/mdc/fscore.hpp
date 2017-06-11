@@ -1,12 +1,12 @@
-#ifndef INCLUDE_MDC_FMEASURE
-#define INCLUDE_MDC_FMEASURE
+#ifndef INCLUDE_MDC_FSCORE
+#define INCLUDE_MDC_FSCORE
 
 #include <Eigen/Dense>
 #include <iostream>
 
 using namespace std;
 
-void fmeasure(Eigen::MatrixXf &confusion) {
+void fscore(Eigen::MatrixXf &confusion) {
   const int N = confusion.rows();
 
   Eigen::RowVectorXd recall(N);

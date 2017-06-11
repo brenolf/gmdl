@@ -98,7 +98,7 @@ namespace mdc {
       return _classes_length;
     }
 
-    void open_set(const string name, const vector<string> &classes) {
+    void open_sets(const string training, const string testing, const vector<string> &classes) {
       _close_sets();
 
       _classes_length = classes.size();
@@ -108,8 +108,8 @@ namespace mdc {
         _classes_lookup[i] = classes[i];
       }
 
-      _training.open(_root + name + ".train.data");
-      _testing.open(_root + name + ".test.data");
+      _training.open(_root + training);
+      _testing.open(_root + testing);
     }
 
     bool training_samples(pair<vector<double>, int> &sample) {
