@@ -7,6 +7,7 @@
 #include <fstream>
 #include <json.hpp>
 #include <map>
+#include <boost/algorithm/string.hpp>
 
 using namespace std;
 
@@ -34,32 +35,40 @@ ClassifierData get_classifier_data(cmdline::parser *args) {
 
   config_file.close();
 
+  const bool isInline = args->exist("inline");
+
   const string set = 
-    args->exist("set") ? 
+    args->exist("set") || isInline ? 
     args->get<string>("set") :
     config["set"].get<string>();
 
   const int label = 
-    args->exist("label") ? 
+    args->exist("label") || isInline ? 
     args->get<int>("label") :
     config["label"].get<int>();
 
   const string datasets_path = 
-    args->exist("path") ? 
+    args->exist("path") || isInline ? 
     args->get<string>("path") :
     config["datasets_path"].get<string>();
 
   const string training = 
-    args->exist("training") ? 
+    args->exist("training") || isInline ? 
     args->get<string>("training") :
     config["datasets"][set]["training"].get<string>();
 
   const string testing = 
-    args->exist("testing") ? 
+    args->exist("testing") || isInline ? 
     args->get<string>("testing") :
     config["datasets"][set]["testing"].get<string>();
 
-  vector<string> classes = config["datasets"][set]["labels"].get<vector<string>>();
+  vector<string> classes;
+
+  if (args->exist("labels") || isInline) {
+    split(classes, args->get<string>("labels"), boost::is_any_of(","));
+  } else {
+    classes = config["datasets"][set]["labels"].get<vector<string>>();
+  }
 
   mdc::Dataset *d = new mdc::Dataset(datasets_path);
   d->set_label_column(label);
@@ -70,10 +79,8 @@ ClassifierData get_classifier_data(cmdline::parser *args) {
   for (auto const &item : METAPARAMS) {
     if (args->exist(item.first)) {
       (classifier->*item.second)(args->get<double>(item.first));
-    } else if (!args->exist("inline")) {
-      try {
-        (classifier->*item.second)(config[item.first].get<double>());
-      } catch(...) {}
+    } else if (!isInline) {
+      (classifier->*item.second)(config[item.first].get<double>());
     }
   }
 

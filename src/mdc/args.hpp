@@ -35,6 +35,13 @@ cmdline::parser *get_parser(int argc, char *argv[]) {
   );
 
   args->add<string>(
+    "labels",
+    '\0',
+    "the labels of the dataset comma-separated",
+    false
+  );
+
+  args->add<string>(
     "set",
     '\0',
     "the key to the set in the config file that should be read",
