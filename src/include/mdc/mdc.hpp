@@ -291,7 +291,7 @@ namespace mdc {
 
         double noise = 0;
 
-        if (SAMPLES < 2 || (VAR_ACC / SAMPLES) < xokdepp::MIN_BANDWIDTH) {
+        if (SAMPLES < 2 || (VAR_ACC / SAMPLES) < 10e-5) {
           noise = noise_distribution(_gen);
         }
 
