@@ -69,6 +69,14 @@ cmdline::parser *get_parser(int argc, char *argv[]) {
     false
   );
 
+  args->add<string>(
+    "config",
+    '\0',
+    "the path to the config json file",
+    false,
+    "./config.json"
+  );
+
   args->add<double>(
     "learning_rate",
     '\0',

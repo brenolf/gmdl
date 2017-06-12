@@ -22,13 +22,15 @@ int main(int argc, char *argv[]) {
 
     if (p.label == sample.second) {
       acc++;
-    } else if (!args->exist("quiet")) {
-      debugger(i, sample, p, data.classifier);
+    } else {
+      data.classifier->train(sample, p.label);
+      
+      if (!args->exist("quiet")) {
+        debugger(i, sample, p, data.classifier);
+      }
     }
 
     confusion(sample.second, p.label)++;
-
-    data.classifier->train(sample, p.label);
   }
 
   if (!args->exist("quiet")) {

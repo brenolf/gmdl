@@ -29,7 +29,7 @@ static const map<string, FnPtr> METAPARAMS = {
 };
 
 ClassifierData get_classifier_data(cmdline::parser *args) {
-  std::ifstream config_file("./config.json");
+  std::ifstream config_file(args->get<string>("config"));
   nlohmann::json config;
   config_file >> config;
 
