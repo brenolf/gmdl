@@ -316,11 +316,13 @@ namespace mdc {
         vectorized_class_sample[attr] = value;
       }
 
-      kde_type &class_pdf = _class_distributions.at(sample.second);
-      class_pdf.add_sample(vectorized_class_sample);
+      if (_delta != 0) {
+        kde_type &class_pdf = _class_distributions.at(sample.second);
+        class_pdf.add_sample(vectorized_class_sample);
 
-      if (class_pdf.size() >= 3) {
-        class_pdf.estimate_kernel_density();
+        if (class_pdf.size() >= 3) {
+          class_pdf.estimate_kernel_density();
+        }
       }
 
       for (int attr = 0; attr < _dimension; attr++) {
