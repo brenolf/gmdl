@@ -6,7 +6,7 @@
 
 using namespace std;
 
-void fscore(Eigen::MatrixXf &confusion) {
+double macro_fscore(Eigen::MatrixXf &confusion) {
   const int N = confusion.rows();
 
   Eigen::RowVectorXd recall(N);
@@ -33,9 +33,11 @@ void fscore(Eigen::MatrixXf &confusion) {
   const double recall_macro = recall.sum() / N;
   const double precision_macro = precision.sum() / N;
 
-  const double F_macro = 2 * (precision_macro * recall_macro) / (precision_macro + recall_macro);
+  return 2 * (precision_macro * recall_macro) / (precision_macro + recall_macro);
+}
 
-  cout << F_macro << endl;
+void fscore(Eigen::MatrixXf &confusion) {
+  cout << macro_fscore(confusion) << endl;
 }
 
 #endif
