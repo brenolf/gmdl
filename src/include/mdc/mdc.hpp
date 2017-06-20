@@ -46,6 +46,7 @@ namespace mdc {
     map<int, vector<double>> _variances_acc;
     map<int, vector<long long>> _SAMPLES;
     mt19937 _gen;
+    mdc::Dataset &_initial_dataset;
 
     double _eta = MDC_DEFAULT_ETA; // learning rate
     double _alpha = MDC_DEFAULT_ALPHA; // momentum
@@ -73,7 +74,7 @@ namespace mdc {
       }
     }
 
-    double _get_distance_to_prototype(vector<double> &attributes, int class_index) {
+    double __get_distance_to_prototype(vector<double> &attributes, int class_index) {
       const kde_type &pdf = _class_distributions.at(class_index);
       const double SIZE = pdf.size();
 
@@ -165,8 +166,24 @@ namespace mdc {
       return __L_hat(attributes, class_index, S) / __L_total(attributes, S);
     }
 
+    bool __isCovarianceDegenerate(long long samples, double mean, double variance, double new_sample) {
+
+      if (samples == 1) {
+        return false;
+      }
+
+      double delta = new_sample - mean;
+      mean += delta / samples;
+
+      double delta2 = new_sample - mean;
+
+      double covariance = variance + ((delta * delta2) / samples);
+
+      return covariance <= xokdepp::MIN_BANDWIDTH;
+    }
+
   public:
-    MDC(mdc::Dataset &dataset) {
+    MDC(mdc::Dataset &dataset) : _initial_dataset(dataset) {
       _classes = dataset.get_label_length();
       _dimension = dataset.get_dimension();
       _Theta = vector<double>(_dimension, _MAX_THETA);
@@ -183,12 +200,6 @@ namespace mdc {
         _distributions.insert(pair<int, vector<kde_type>>(c, attrs));
         _class_distributions.insert(pair<int, kde_type>(c, kde_type(_dimension)));
       }
-
-      pair<vector<double>, int> sample;
-
-      while (dataset.training_samples(sample)) {
-        train(sample);
-      }
     }
 
     vector<double> get_distances(vector<double> &attributes) {
@@ -198,13 +209,13 @@ namespace mdc {
         return S;
       }
 
-      S[0] = _get_distance_to_prototype(attributes, 0);
+      S[0] = __get_distance_to_prototype(attributes, 0);
 
       double S_min = S[0];
       double S_max = S[0];
 
       for (int c = 1; c < _classes; c++) {
-        S[c] = _get_distance_to_prototype(attributes, c);
+        S[c] = __get_distance_to_prototype(attributes, c);
 
         S_min = min(S_min, S[c]);
         S_max = max(S_max, S[c]);
@@ -264,6 +275,14 @@ namespace mdc {
       }
     }
 
+    void train() {
+      pair<vector<double>, int> sample;
+
+      while (_initial_dataset.training_samples(sample)) {
+        train(sample);
+      }
+    }
+
     void train(pair<vector<double>, int> &sample, int prediction) {
       train(sample);
       __update_Theta(sample, prediction);
@@ -271,13 +290,20 @@ namespace mdc {
 
     void train(pair<vector<double>, int> &sample) {
       xokdepp::vector_type vectorized_class_sample(_dimension);
-
       normal_distribution<> noise_distribution(0, _sigma);
 
       for (int attr = 0; attr < _dimension; attr++) {
         long long &SAMPLES = _SAMPLES.at(sample.second).at(attr);
         double &MEAN = _means.at(sample.second).at(attr);
         double &VAR_ACC = _variances_acc.at(sample.second).at(attr);
+
+        double noise = 0;
+
+        while (__isCovarianceDegenerate(
+          SAMPLES + 1, MEAN, VAR_ACC, sample.first.at(attr) + noise
+        )) {
+          noise += noise_distribution(_gen);
+        }
 
         SAMPLES++;
 
@@ -288,12 +314,6 @@ namespace mdc {
         double delta2 = sample.first.at(attr) - MEAN;
 
         VAR_ACC += delta * delta2;
-
-        double noise = 0;
-
-        if (SAMPLES < 2 || (VAR_ACC / SAMPLES) < 10e-5) {
-          noise = noise_distribution(_gen);
-        }
 
         vectorized_class_sample[attr] = sample.first.at(attr) + noise;
       }

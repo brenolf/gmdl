@@ -81,6 +81,8 @@ ClassifierData get_classifier_data(cmdline::parser *args) {
       (classifier->*item.second)(args->get<double>(item.first));
     } else if (!isInline) {
       (classifier->*item.second)(config[item.first].get<double>());
+    } else {
+      throw "`inline` option is true but argument `" + item.first + "` is missing";
     }
   }
 
