@@ -17,8 +17,17 @@ void fscore(Eigen::MatrixXf &confusion) {
     const double fn = confusion.row(i).sum() - tp;
     const double fp = confusion.col(i).sum() - tp;
 
-    recall(i) = tp / (tp + fn);
-    precision(i) = tp / (tp + fp);
+    if ((tp + fn) != 0) {
+      recall(i) = tp / (tp + fn);
+    } else {
+      recall(i) = 0;
+    }
+
+    if ((tp + fp) != 0) {
+      precision(i) = tp / (tp + fp);
+    } else {
+      precision(i) = 0;
+    }
   }
 
   const double recall_macro = recall.sum() / N;
