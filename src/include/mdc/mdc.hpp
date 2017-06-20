@@ -297,25 +297,23 @@ namespace mdc {
         double &MEAN = _means.at(sample.second).at(attr);
         double &VAR_ACC = _variances_acc.at(sample.second).at(attr);
 
-        double noise = 0;
+        double value = sample.first.at(attr);
 
-        while (__isCovarianceDegenerate(
-          SAMPLES + 1, MEAN, VAR_ACC, sample.first.at(attr) + noise
-        )) {
-          noise += noise_distribution(_gen);
+        while (__isCovarianceDegenerate(SAMPLES + 1, MEAN, VAR_ACC, value)) {
+          value += noise_distribution(_gen);
         }
 
         SAMPLES++;
 
-        double delta = sample.first.at(attr) - MEAN;
+        double delta = value - MEAN;
 
         MEAN += delta / SAMPLES;
 
-        double delta2 = sample.first.at(attr) - MEAN;
+        double delta2 = value - MEAN;
 
         VAR_ACC += delta * delta2;
 
-        vectorized_class_sample[attr] = sample.first.at(attr) + noise;
+        vectorized_class_sample[attr] = value;
       }
 
       kde_type &class_pdf = _class_distributions.at(sample.second);
