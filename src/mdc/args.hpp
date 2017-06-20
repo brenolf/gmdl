@@ -65,14 +65,16 @@ cmdline::parser *get_parser(int argc, char *argv[]) {
     "training",
     '\0',
     "the name of the traning set",
-    false
+    false,
+    ""
   );
 
   args->add<string>(
     "testing",
     '\0',
     "the name of the testing set",
-    false
+    false,
+    ""
   );
 
   args->add<string>(
