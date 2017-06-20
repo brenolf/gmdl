@@ -17,7 +17,7 @@ wget https://raw.githubusercontent.com/tanakh/cmdline/master/cmdline.h --show-pr
 
 echo "$Cyan"'\nMaking headers available\n'"$Color_Off";
 
-if [[ "$OS" == "darwin" ]]; then
+if test "$OS" = "darwin"; then
   mv /tmp/json.hpp /usr/local/include/json.hpp;
   mv /tmp/cmdline.hpp /usr/local/include/cmdline.hpp;
 else
@@ -27,12 +27,12 @@ fi
 
 echo "$Cyan"'Installing libraries\n'"$Color_Off"
 
-if [[ "$OS" == "darwin" ]]; then
+if test "$OS" = "darwin"; then
   brew install llvm eigen boost;
   ln -s /usr/local/opt/llvm/bin/clang++ /usr/local/bin/clang-omp++
 else
-  apt-get install clang++ libomp-dev libboost-dev libeigen3-dev;
-  ln -s /usr/bin/clang++ /usr/bin/clang-omp++;
+  sudo apt-get install clang++ libomp-dev libboost-dev libeigen3-dev;
+  sudo ln -s /usr/bin/clang++ /usr/bin/clang-omp++;
 fi
 
 echo "$Green"'\nAll done! Run `make` to compile.'"$Color_Off"
