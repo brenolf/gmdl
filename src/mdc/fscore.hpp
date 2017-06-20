@@ -6,6 +6,10 @@
 
 using namespace std;
 
+double harmonic_mean(double precision, double recall) {
+  return 2 * ((precision * recall) / (precision + recall));
+}
+
 double macro_fscore(Eigen::MatrixXf &confusion) {
   const int N = confusion.rows();
 
@@ -30,14 +34,30 @@ double macro_fscore(Eigen::MatrixXf &confusion) {
     }
   }
 
-  const double recall_macro = recall.sum() / N;
-  const double precision_macro = precision.sum() / N;
+  return harmonic_mean((precision.sum() / N), (recall.sum() / N));
+}
 
-  return 2 * (precision_macro * recall_macro) / (precision_macro + recall_macro);
+double micro_fscore(Eigen::MatrixXf &confusion) {
+  const int N = confusion.rows();
+
+  double tp = 0;
+  double fp = 0;
+  double fn = 0;
+
+  for (int i = 0; i < N; i++) {
+    tp += confusion(i, i);
+    fn += confusion.row(i).sum() - confusion(i, i);
+    fp += confusion.col(i).sum() - confusion(i, i);
+  }
+
+  double precision = (tp + fp) == 0 ? 0 : tp / (tp + fp);
+  double recall = (tp + fn) == 0 ? 0 : tp / (tp + fn);
+
+  return harmonic_mean(precision, recall);
 }
 
 void fscore(Eigen::MatrixXf &confusion) {
-  cout << macro_fscore(confusion) << endl;
+  cout << macro_fscore(confusion) << "/" << micro_fscore(confusion) << endl;
 }
 
 #endif
