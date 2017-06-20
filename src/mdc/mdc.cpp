@@ -25,7 +25,9 @@ int main(int argc, char *argv[]) {
     if (p.label == sample.second) {
       acc++;
     } else {
-      data.classifier->train(sample, p.label);
+      if (!args->exist("no-incremental-learning")) {
+        data.classifier->train(sample, p.label);
+      }
       
       if (!args->exist("quiet")) {
         debugger(i, sample, p, data.classifier);

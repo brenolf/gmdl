@@ -27,6 +27,12 @@ cmdline::parser *get_parser(int argc, char *argv[]) {
     "outputs f-score instead of confusion matrix"
   );
 
+  args->add(
+    "no-incremental-learning",
+    '\0',
+    "disables incremental learning"
+  );
+
   args->add<int>(
     "label",
     '\0',
