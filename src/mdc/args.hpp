@@ -102,11 +102,11 @@ cmdline::parser *get_parser(int argc, char *argv[]) {
   );
 
   args->add<double>(
-    "delta",
+    "tau",
     '\0',
     "the exponent of the prototype distance used to separate classes",
     false,
-    MDC_DEFAULT_DELTA
+    MDC_DEFAULT_TAU
   );
 
   args->add<double>(

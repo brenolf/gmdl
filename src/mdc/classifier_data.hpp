@@ -21,7 +21,7 @@ typedef void (mdc::MDC::*FnPtr)(double);
 static const map<string, FnPtr> METAPARAMS = {
   {"learning_rate", &mdc::MDC::set_learning_rate},
   {"momentum", &mdc::MDC::set_momentum},
-  {"delta", &mdc::MDC::set_delta},
+  {"tau", &mdc::MDC::set_tau},
   {"beta", &mdc::MDC::set_beta},
   {"omega", &mdc::MDC::set_omega},
   {"forgetting_factor", &mdc::MDC::set_forgeting_factor},

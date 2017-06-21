@@ -7,7 +7,7 @@
 #define MDC_DEFAULT_F 1
 #define MDC_DEFAULT_ETA 0.01
 #define MDC_DEFAULT_ALPHA 0.9
-#define MDC_DEFAULT_DELTA 1
+#define MDC_DEFAULT_TAU 1
 
 #include <vector>
 #include <map>
@@ -50,7 +50,7 @@ namespace mdc {
 
     double _eta = MDC_DEFAULT_ETA; // learning rate
     double _alpha = MDC_DEFAULT_ALPHA; // momentum
-    double _delta = MDC_DEFAULT_DELTA; // class prototype distance impact
+    double _tau = MDC_DEFAULT_TAU; // class prototype distance impact
 
     double _SEED = 123456789;
     double _MAX_THETA = 0.999999999;
@@ -205,7 +205,7 @@ namespace mdc {
     vector<double> get_distances(vector<double> &attributes) {
       vector<double> S(_classes, 1);
 
-      if (_delta == 0) {
+      if (_tau == 0) {
         return S;
       }
 
@@ -225,7 +225,7 @@ namespace mdc {
         double normalized = (S[c] - S_min) / (S_max - S_min);
 
         S[c] = isinf(S[c]) ? 1 : -log2(0.5 * (1 - normalized + _beta));
-        S[c] = pow(S[c], _delta);
+        S[c] = pow(S[c], _tau);
       }
 
       return S;
@@ -247,8 +247,8 @@ namespace mdc {
       _beta = pow(2, -beta);
     }
 
-    void set_delta(double delta) {
-      _delta = delta;
+    void set_tau(double tau) {
+      _tau = tau;
     }
 
     void set_sigma(double sigma) {
@@ -316,7 +316,7 @@ namespace mdc {
         vectorized_class_sample[attr] = value;
       }
 
-      if (_delta != 0) {
+      if (_tau != 0) {
         kde_type &class_pdf = _class_distributions.at(sample.second);
         class_pdf.add_sample(vectorized_class_sample);
 
