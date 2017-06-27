@@ -182,6 +182,22 @@ namespace mdc {
       return covariance <= xokdepp::MIN_BANDWIDTH;
     }
 
+    void __estimate_kernel_density(kde_type &pdf) {
+      if (pdf.size() >= 3) {
+        pdf.estimate_kernel_density();
+      }
+    }
+
+    void __estimate_kernel_densities(int class_index) {
+      if (_tau != 0) {
+        __estimate_kernel_density(_class_distributions.at(class_index));
+      }
+
+      for (int attr = 0; attr < _dimension; attr++) {
+        __estimate_kernel_density(_distributions.at(class_index).at(attr));
+      }
+    }
+
   public:
     MDC(mdc::Dataset &dataset) : _initial_dataset(dataset) {
       _classes = dataset.get_label_length();
@@ -281,10 +297,15 @@ namespace mdc {
       while (_initial_dataset.training_samples(sample)) {
         train(sample);
       }
+
+      for (int c = 0; c < _classes; c++) {
+        __estimate_kernel_densities(c);
+      }
     }
 
     void train(pair<vector<double>, int> &sample, int prediction) {
       train(sample);
+      __estimate_kernel_densities(sample.second);
       __update_Theta(sample, prediction);
     }
 
@@ -319,10 +340,6 @@ namespace mdc {
       if (_tau != 0) {
         kde_type &class_pdf = _class_distributions.at(sample.second);
         class_pdf.add_sample(vectorized_class_sample);
-
-        if (class_pdf.size() >= 3) {
-          class_pdf.estimate_kernel_density();
-        }
       }
 
       for (int attr = 0; attr < _dimension; attr++) {
@@ -332,10 +349,6 @@ namespace mdc {
         kde_type &pdf = _distributions.at(sample.second).at(attr);
 
         pdf.add_sample(vectorized_sample);
-
-        if (pdf.size() >= 3) {
-          pdf.estimate_kernel_density();
-        }
       }
     }
 
