@@ -1,5 +1,5 @@
-#ifndef INCLUDE_MDC_FSCORE
-#define INCLUDE_MDC_FSCORE
+#ifndef INCLUDE_GMDL_FSCORE
+#define INCLUDE_GMDL_FSCORE
 
 #include <Eigen/Dense>
 #include <iostream>

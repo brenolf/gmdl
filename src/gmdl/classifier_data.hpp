@@ -1,8 +1,8 @@
-#ifndef INCLUDE_MDC_CLASSIFIER  
-#define INCLUDE_MDC_CLASSIFIER  
+#ifndef INCLUDE_GMDL_CLASSIFIER  
+#define INCLUDE_GMDL_CLASSIFIER  
 
 #include "dataset/dataset.hpp"
-#include "mdc/mdc.hpp"
+#include "gmdl/gmdl.hpp"
 #include <iostream>
 #include <fstream>
 #include <json.hpp>
@@ -12,20 +12,20 @@
 using namespace std;
 
 typedef struct {
-  mdc::MDC *classifier;
-  mdc::Dataset *dataset;
+  gmdl::GMDL *classifier;
+  gmdl::Dataset *dataset;
 } ClassifierData;
 
-typedef void (mdc::MDC::*FnPtr)(double);
+typedef void (gmdl::GMDL::*FnPtr)(double);
 
 static const map<string, FnPtr> METAPARAMS = {
-  {"learning_rate", &mdc::MDC::set_learning_rate},
-  {"momentum", &mdc::MDC::set_momentum},
-  {"tau", &mdc::MDC::set_tau},
-  {"beta", &mdc::MDC::set_beta},
-  {"omega", &mdc::MDC::set_omega},
-  {"forgetting_factor", &mdc::MDC::set_forgeting_factor},
-  {"sigma", &mdc::MDC::set_sigma}
+  {"learning_rate", &gmdl::GMDL::set_learning_rate},
+  {"momentum", &gmdl::GMDL::set_momentum},
+  {"tau", &gmdl::GMDL::set_tau},
+  {"beta", &gmdl::GMDL::set_beta},
+  {"omega", &gmdl::GMDL::set_omega},
+  {"forgetting_factor", &gmdl::GMDL::set_forgeting_factor},
+  {"sigma", &gmdl::GMDL::set_sigma}
 };
 
 ClassifierData get_classifier_data(cmdline::parser *args) {
@@ -70,11 +70,11 @@ ClassifierData get_classifier_data(cmdline::parser *args) {
     classes = config["datasets"][set]["labels"].get<vector<string>>();
   }
 
-  mdc::Dataset *d = new mdc::Dataset(datasets_path);
+  gmdl::Dataset *d = new gmdl::Dataset(datasets_path);
   d->set_label_column(label);
   d->open_sets(training, testing, classes);
 
-  mdc::MDC *classifier = new mdc::MDC(*d);
+  gmdl::GMDL *classifier = new gmdl::GMDL(*d);
 
   for (auto const &item : METAPARAMS) {
     if (args->exist(item.first)) {

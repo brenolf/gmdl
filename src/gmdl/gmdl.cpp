@@ -20,7 +20,7 @@ int main(int argc, char *argv[]) {
   while (data.dataset->testing_samples(sample)) {
     i++;
 
-    mdc::prediction p = data.classifier->predict(sample.first);
+    gmdl::prediction p = data.classifier->predict(sample.first);
 
     if (p.label == sample.second) {
       acc++;

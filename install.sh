@@ -7,7 +7,7 @@ BPurple="\033[1;35m"
 
 OS=`uname -s | tr '[:upper:]' '[:lower:]'`;
 
-echo "$BPurple"'Installing MDC dependencies\n\n'"$Color_Off"
+echo "$BPurple"'Installing GMDL dependencies\n\n'"$Color_Off"
 
 echo "$Cyan"'Downloading C++ headers\n'"$Color_Off";
 

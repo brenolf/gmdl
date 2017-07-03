@@ -1,13 +1,13 @@
-#ifndef SRC_INCLUDE_MDC_H_
-#define SRC_INCLUDE_MDC_H_
+#ifndef SRC_INCLUDE_GMDL_H_
+#define SRC_INCLUDE_GMDL_H_
 
-#define MDC_DEFAULT_OMEGA -32
-#define MDC_DEFAULT_BETA -32
-#define MDC_DEFAULT_SIGMA 1
-#define MDC_DEFAULT_F 1
-#define MDC_DEFAULT_ETA 0.01
-#define MDC_DEFAULT_ALPHA 0.9
-#define MDC_DEFAULT_TAU 1
+#define GMDL_DEFAULT_OMEGA -32
+#define GMDL_DEFAULT_BETA -32
+#define GMDL_DEFAULT_SIGMA 1
+#define GMDL_DEFAULT_F 1
+#define GMDL_DEFAULT_ETA 0.01
+#define GMDL_DEFAULT_ALPHA 0.9
+#define GMDL_DEFAULT_TAU 1
 
 #include <vector>
 #include <map>
@@ -20,13 +20,13 @@
 
 using namespace std;
 
-namespace mdc {
+namespace gmdl {
   typedef struct _prediction_type {
     int label;
     vector<double> description_lengths;
   } prediction;
 
-  class MDC {
+  class GMDL {
     typedef xokdepp::gaussian<xokdepp::vector_type> gaussian_type;
     typedef xokdepp::explanation<gaussian_type, xokdepp::vector_type> explanation_type;
     typedef xokdepp::oKDE<gaussian_type, xokdepp::vector_type> kde_type;
@@ -34,8 +34,8 @@ namespace mdc {
   private:
     int _classes;
     int _dimension;
-    double _omega = pow(2, MDC_DEFAULT_OMEGA);
-    double _beta = pow(2, MDC_DEFAULT_BETA);
+    double _omega = pow(2, GMDL_DEFAULT_OMEGA);
+    double _beta = pow(2, GMDL_DEFAULT_BETA);
     double _sigma = 1;
     double _forgeting_factor = 1;
     map<int, vector<kde_type>> _distributions;
@@ -46,11 +46,11 @@ namespace mdc {
     map<int, vector<double>> _variances_acc;
     map<int, vector<long long>> _SAMPLES;
     mt19937 _gen;
-    mdc::Dataset &_initial_dataset;
+    gmdl::Dataset &_initial_dataset;
 
-    double _eta = MDC_DEFAULT_ETA; // learning rate
-    double _alpha = MDC_DEFAULT_ALPHA; // momentum
-    double _tau = MDC_DEFAULT_TAU; // class prototype distance impact
+    double _eta = GMDL_DEFAULT_ETA; // learning rate
+    double _alpha = GMDL_DEFAULT_ALPHA; // momentum
+    double _tau = GMDL_DEFAULT_TAU; // class prototype distance impact
 
     double _SEED = 123456789;
     double _MAX_THETA = 0.999999999;
@@ -199,7 +199,7 @@ namespace mdc {
     }
 
   public:
-    MDC(mdc::Dataset &dataset) : _initial_dataset(dataset) {
+    GMDL(gmdl::Dataset &dataset) : _initial_dataset(dataset) {
       _classes = dataset.get_label_length();
       _dimension = dataset.get_dimension();
       _Theta = vector<double>(_dimension, _MAX_THETA);

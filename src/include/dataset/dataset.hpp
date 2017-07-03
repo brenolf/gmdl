@@ -8,7 +8,7 @@
 
 using namespace std;
 
-namespace mdc {
+namespace gmdl {
   class Dataset {
   private:
     const string _root;

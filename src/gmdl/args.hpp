@@ -1,13 +1,13 @@
-#ifndef INCLUDE_MDC_ARGS
-#define INCLUDE_MDC_ARGS
+#ifndef INCLUDE_GMDL_ARGS
+#define INCLUDE_GMDL_ARGS
 
 #include <cmdline.hpp>
-#include "mdc/mdc.hpp"
+#include "gmdl/gmdl.hpp"
 
 cmdline::parser *get_parser(int argc, char *argv[]) {
   cmdline::parser *args = new cmdline::parser();
 
-  args->set_program_name("MDC");
+  args->set_program_name("GMDL");
 
   args->add(
     "inline",
@@ -90,7 +90,7 @@ cmdline::parser *get_parser(int argc, char *argv[]) {
     '\0',
     "the learning rate used to the SGD on the theta exponents",
     false,
-    MDC_DEFAULT_ETA
+    GMDL_DEFAULT_ETA
   );
 
   args->add<double>(
@@ -98,7 +98,7 @@ cmdline::parser *get_parser(int argc, char *argv[]) {
     '\0',
     "the momentum used to the SGD on the theta exponents",
     false,
-    MDC_DEFAULT_ALPHA
+    GMDL_DEFAULT_ALPHA
   );
 
   args->add<double>(
@@ -106,7 +106,7 @@ cmdline::parser *get_parser(int argc, char *argv[]) {
     '\0',
     "the exponent of the prototype distance used to separate classes",
     false,
-    MDC_DEFAULT_TAU
+    GMDL_DEFAULT_TAU
   );
 
   args->add<double>(
@@ -114,7 +114,7 @@ cmdline::parser *get_parser(int argc, char *argv[]) {
     '\0',
     "the impact applied to the class that is the most distant from its prototype",
     false,
-    MDC_DEFAULT_BETA
+    GMDL_DEFAULT_BETA
   );
 
   args->add<double>(
@@ -122,7 +122,7 @@ cmdline::parser *get_parser(int argc, char *argv[]) {
     '\0',
     "the default description length assumed when there is no clue about the data being assessed",
     false,
-    MDC_DEFAULT_OMEGA
+    GMDL_DEFAULT_OMEGA
   );
 
   args->add<double>(
@@ -130,7 +130,7 @@ cmdline::parser *get_parser(int argc, char *argv[]) {
     '\0',
     "the factor by which the samples in the mixture are considered outdated (1 = no forgetting)",
     false,
-    MDC_DEFAULT_F
+    GMDL_DEFAULT_F
   );
 
   args->add<double>(
@@ -138,7 +138,7 @@ cmdline::parser *get_parser(int argc, char *argv[]) {
     '\0',
     "the standard deviation to the noise applied when the covariance matrix is getting close to be singular",
     false,
-    MDC_DEFAULT_SIGMA
+    GMDL_DEFAULT_SIGMA
   );
 
   args->parse_check(argc, argv);

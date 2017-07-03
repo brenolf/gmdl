@@ -1,9 +1,9 @@
 CXXFILES_CORE = $(wildcard src/include/**/*.cpp)
 OFILES_CORE = $(CXXFILES_CORE:%.cpp=%.o)
 
-CXXFILES_MDC = $(wildcard src/mdc/*.cpp)
-OFILES_MDC = $(CXXFILES_MDC:%.cpp=%.o)
-PROGRAMS_MDC = mdc.app
+CXXFILES_GMDL = $(wildcard src/gmdl/*.cpp)
+OFILES_GMDL = $(CXXFILES_GMDL:%.cpp=%.o)
+PROGRAMS_GMDL = gmdl.app
 
 INCLUDES= -I. -Isrc/include
 INCLUDES+= -I/usr/local/include
@@ -25,18 +25,18 @@ LDFLAGS= -L/usr/local/opt/llvm/lib
 CXX = time clang-omp++
 
 .PHONY: all
-all: $(PROGRAMS_MDC)
+all: $(PROGRAMS_GMDL)
 
 %.o:: %.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-$(PROGRAMS_MDC): $(OFILES_CORE) $(OFILES_MDC)
-	$(CXX) -o $(PROGRAMS_MDC) $^ -fopenmp $(LDFLAGS)
+$(PROGRAMS_GMDL): $(OFILES_CORE) $(OFILES_GMDL)
+	$(CXX) -o $(PROGRAMS_GMDL) $^ -fopenmp $(LDFLAGS)
 
 depend:
-	$(CXX) -MM $(CXXFLAGS) $(CXXFILES_MDC) >> .deps
+	$(CXX) -MM $(CXXFLAGS) $(CXXFILES_GMDL) >> .deps
 
 clean:
-	rm -f $(OFILES_CORE) $(OFILES_MDC) $(PROGRAMS_MDC)
+	rm -f $(OFILES_CORE) $(OFILES_GMDL) $(PROGRAMS_GMDL)
 
 -include .deps

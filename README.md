@@ -1,4 +1,4 @@
-# Minimum Description Classifier (MDC)
+# Gaussian Mixture Descriptors Learner (GMDL)
 
 ## Install
 
@@ -8,12 +8,12 @@ Run `sh ./install.sh`. On Ubuntu-based systems run this command as `sudo`.
 
 ### App
 
-Run `make` and `./mdc.app` to run.
+Run `make` and `./gmdl.app` to run.
 
 ## Usage
 
 ```
-usage: MDC [options] ... 
+usage: GMDL [options] ... 
 options:
   -i, --inline                     pass configurations parameters inline instead of reading json file
   -q, --quiet                      omits logging when classification fails

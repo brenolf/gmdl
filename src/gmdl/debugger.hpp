@@ -1,7 +1,7 @@
-#ifndef INCLUDE_MDC_DEBUGGER
-#define INCLUDE_MDC_DEBUGGER
+#ifndef INCLUDE_GMDL_DEBUGGER
+#define INCLUDE_GMDL_DEBUGGER
 
-void debugger(int i, pair<vector<double>, int> &sample, mdc::prediction &p, mdc::MDC *classifier) {
+void debugger(int i, pair<vector<double>, int> &sample, gmdl::prediction &p, gmdl::GMDL *classifier) {
   cout << "iteration: " << i << endl;
   cout << "data: ";
 
