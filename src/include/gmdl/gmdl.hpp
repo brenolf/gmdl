@@ -147,7 +147,7 @@ namespace gmdl {
         DL += __L_hat_attribute(attributes, class_index, attr);
       }
 
-      return max(0.0, DL * S[class_index]);
+      return max(0.0, DL * S[class_index] + __LM(class_index));
     }
 
     double __L_total(vector<double> &attributes, vector<double> &distances) {
@@ -164,6 +164,20 @@ namespace gmdl {
       vector<double> S = get_distances(attributes);
 
       return __L_hat(attributes, class_index, S) / __L_total(attributes, S);
+    }
+
+    double __LM(int class_index) {
+      double complexity = 0;
+
+      for (int attr = 0; attr < _dimension; attr++) {
+        complexity += _distributions.at(class_index).at(attr).size();
+      }
+
+      if (_tau != 0) {
+        complexity += _class_distributions.at(class_index).size();
+      }
+
+      return complexity;
     }
 
     bool __isCovarianceDegenerate(long long samples, double mean, double variance, double new_sample) {
