@@ -36,6 +36,7 @@ int main(int argc, char *argv[]) {
     confusion(sample.second, p.label)++;
   }
 
+  cout << data.dataset->get_header() << endl;
   cout << confusion << endl;
 
   return 0;

@@ -12,13 +12,14 @@ namespace gmdl {
   protected:
     string _separator = ",";
     int _label_column = -1;
-    const vector<string> &classes;
+    vector<string> classes;
     map<string, int> class_ids;
 
   public:
-    Dataset(const vector<string> &classes): classes(classes) {
-      for (int i = 0; i < classes.size(); i++) {
-        class_ids[classes[i]] = i;
+    Dataset(const vector<string> &local_classes) {
+      for (int i = 0; i < local_classes.size(); i++) {
+        class_ids[local_classes[i]] = i;
+        classes.push_back(local_classes[i]);
       }
     }
 
@@ -40,6 +41,16 @@ namespace gmdl {
 
     string get_label_name(int i) {
       return classes.at(i);
+    }
+
+    string get_header() {
+      string header = "";
+
+      for (int i = 0; i < classes.size(); i++) {
+        header += classes.at(i) + (i + 1 < classes.size() ? " " : "");
+      }
+
+      return header;
     }
 
     virtual int get_dimension() = 0;
