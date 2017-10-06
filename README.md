@@ -16,8 +16,8 @@ Run `make` and `./gmdl.app` to run.
 usage: GMDL [options] ... 
 options:
   -i, --inline                     pass configurations parameters inline instead of reading json file
+      --stdin                      reads from stdin (prioritized)
   -q, --quiet                      omits logging when classification fails
-  -f, --fscore                     outputs f-score instead of confusion matrix
       --no-incremental-learning    disables incremental learning
       --label                      the index of the column that should be considered the label (int [=0])
       --labels                     the labels of the dataset comma-separated (string [=])

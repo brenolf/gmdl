@@ -212,6 +212,49 @@ namespace gmdl {
       }
     }
 
+    void train(pair<vector<double>, int> &sample) {
+      xokdepp::vector_type vectorized_class_sample(_dimension);
+      normal_distribution<> noise_distribution(0, _sigma);
+
+      for (int attr = 0; attr < _dimension; attr++) {
+        long long &SAMPLES = _SAMPLES.at(sample.second).at(attr);
+        double &MEAN = _means.at(sample.second).at(attr);
+        double &VAR_ACC = _variances_acc.at(sample.second).at(attr);
+
+        double value = sample.first.at(attr);
+
+        while (__isCovarianceDegenerate(SAMPLES + 1, MEAN, VAR_ACC, value)) {
+          value += noise_distribution(_gen);
+        }
+
+        SAMPLES++;
+
+        double delta = value - MEAN;
+
+        MEAN += delta / SAMPLES;
+
+        double delta2 = value - MEAN;
+
+        VAR_ACC += delta * delta2;
+
+        vectorized_class_sample[attr] = value;
+      }
+
+      if (_tau != 0) {
+        kde_type &class_pdf = _class_distributions.at(sample.second);
+        class_pdf.add_sample(vectorized_class_sample);
+      }
+
+      for (int attr = 0; attr < _dimension; attr++) {
+        xokdepp::vector_type vectorized_sample(1);
+        vectorized_sample << vectorized_class_sample[attr];
+
+        kde_type &pdf = _distributions.at(sample.second).at(attr);
+
+        pdf.add_sample(vectorized_sample);
+      }
+    }
+
   public:
     GMDL(gmdl::Dataset &dataset) : _initial_dataset(dataset) {
       _classes = dataset.get_label_length();
@@ -321,49 +364,6 @@ namespace gmdl {
       train(sample);
       __estimate_kernel_densities(sample.second);
       __update_Theta(sample, prediction);
-    }
-
-    void train(pair<vector<double>, int> &sample) {
-      xokdepp::vector_type vectorized_class_sample(_dimension);
-      normal_distribution<> noise_distribution(0, _sigma);
-
-      for (int attr = 0; attr < _dimension; attr++) {
-        long long &SAMPLES = _SAMPLES.at(sample.second).at(attr);
-        double &MEAN = _means.at(sample.second).at(attr);
-        double &VAR_ACC = _variances_acc.at(sample.second).at(attr);
-
-        double value = sample.first.at(attr);
-
-        while (__isCovarianceDegenerate(SAMPLES + 1, MEAN, VAR_ACC, value)) {
-          value += noise_distribution(_gen);
-        }
-
-        SAMPLES++;
-
-        double delta = value - MEAN;
-
-        MEAN += delta / SAMPLES;
-
-        double delta2 = value - MEAN;
-
-        VAR_ACC += delta * delta2;
-
-        vectorized_class_sample[attr] = value;
-      }
-
-      if (_tau != 0) {
-        kde_type &class_pdf = _class_distributions.at(sample.second);
-        class_pdf.add_sample(vectorized_class_sample);
-      }
-
-      for (int attr = 0; attr < _dimension; attr++) {
-        xokdepp::vector_type vectorized_sample(1);
-        vectorized_sample << vectorized_class_sample[attr];
-
-        kde_type &pdf = _distributions.at(sample.second).at(attr);
-
-        pdf.add_sample(vectorized_sample);
-      }
     }
 
     prediction predict(vector<double> &attributes) {

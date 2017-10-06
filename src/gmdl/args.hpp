@@ -16,15 +16,15 @@ cmdline::parser *get_parser(int argc, char *argv[]) {
   );
 
   args->add(
-    "quiet",
-    'q',
-    "omits logging when classification fails"
+    "stdin",
+    '\0',
+    "reads from stdin (prioritized)"
   );
 
   args->add(
-    "fscore",
-    'f',
-    "outputs f-score instead of confusion matrix"
+    "quiet",
+    'q',
+    "omits logging when classification fails"
   );
 
   args->add(
@@ -58,7 +58,8 @@ cmdline::parser *get_parser(int argc, char *argv[]) {
     "path",
     'p',
     "the path in which to look for datasets",
-    false
+    false,
+    ""
   );
 
   args->add<string>(

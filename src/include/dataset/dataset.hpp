@@ -1,75 +1,25 @@
 #ifndef SRC_INCLUDE_DATASET_H_
 #define SRC_INCLUDE_DATASET_H_
 
-#include <fstream>
-#include <map>
 #include <vector>
-#include <boost/algorithm/string.hpp>
+#include <map>
+#include <iterator>
 
 using namespace std;
 
 namespace gmdl {
   class Dataset {
-  private:
-    const string _root;
-
+  protected:
     string _separator = ",";
     int _label_column = -1;
-    int _classes_length = -1;
-
-    map<string, int> _classes;
-    map<int, string> _classes_lookup;
-
-    ifstream _training;
-    ifstream _testing;
-
-    void _close_sets() {
-      if (_training.is_open()) {
-        _training.close();
-      }
-
-      if (_testing.is_open()) {
-        _testing.close();
-      }
-
-      _classes.clear();
-      _classes_lookup.clear();
-    }
-
-    bool _iterate_over_file(pair<vector<double>, int> &sample, ifstream &file) {
-      string line;
-
-      if (!getline(file, line)) {
-        return false;
-      }
-
-      vector<string> xs;
-      vector<double> attributes;
-
-      split(xs, line, boost::is_any_of(_separator));
-
-      int LABEL_COLUMN = (_label_column == -1) ? xs.size() - 1 : _label_column;
-
-      for (int column = 0; column < xs.size(); column++) {
-        if (column == LABEL_COLUMN) {
-          continue;
-        }
-
-        attributes.push_back(stod(xs[column]));
-      }
-
-      sample.first = attributes;
-      sample.second = _classes.at(xs[LABEL_COLUMN]);
-
-      return true;
-    }
+    const vector<string> &classes;
+    map<string, int> class_ids;
 
   public:
-    Dataset(const string root) : _root(root) {
-    }
-
-    ~Dataset() {
-      _close_sets();
+    Dataset(const vector<string> &classes): classes(classes) {
+      for (int i = 0; i < classes.size(); i++) {
+        class_ids[classes[i]] = i;
+      }
     }
 
     void set_separator(string separator) {
@@ -80,52 +30,21 @@ namespace gmdl {
       _label_column = label_column;
     }
 
-    string get_label_name(int i) {
-      return _classes_lookup.at(i);
-    }
-
-    int get_dimension() {
-      pair<vector<double>, int> sample;
-      _iterate_over_file(sample, _testing);
-
-      _testing.clear();
-      _testing.seekg(0);
-
-      return sample.first.size();
-    }
-
     int get_label_length() {
-      return _classes_length;
+      return classes.size();
     }
 
-    void open_sets(const string training, const string testing, const vector<string> &classes) {
-      if (testing == "") {
-        throw "no test set supplied";
-      }
-
-      _close_sets();
-
-      _classes_length = classes.size();
-
-      for (int i = 0; i < _classes_length; i++) {
-        _classes[classes[i]] = i;
-        _classes_lookup[i] = classes[i];
-      }
-
-      if (training != "") {
-        _training.open(_root + training);
-      }
-
-      _testing.open(_root + testing);
+    int find_class_id(const string name) {
+      return class_ids[name];
     }
 
-    bool training_samples(pair<vector<double>, int> &sample) {
-      return _iterate_over_file(sample, _training);
+    string get_label_name(int i) {
+      return classes.at(i);
     }
 
-    bool testing_samples(pair<vector<double>, int> &sample) {
-      return _iterate_over_file(sample, _testing);
-    }
+    virtual int get_dimension() = 0;
+    virtual bool training_samples(pair<vector<double>, int> &sample) = 0;
+    virtual bool testing_samples(pair<vector<double>, int> &sample) = 0;
   };
 }
 

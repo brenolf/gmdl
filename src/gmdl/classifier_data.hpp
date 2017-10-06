@@ -1,7 +1,8 @@
 #ifndef INCLUDE_GMDL_CLASSIFIER  
 #define INCLUDE_GMDL_CLASSIFIER  
 
-#include "dataset/dataset.hpp"
+#include "dataset/input_dataset.hpp"
+#include "dataset/file_dataset.hpp"
 #include "gmdl/gmdl.hpp"
 #include <iostream>
 #include <fstream>
@@ -36,6 +37,7 @@ ClassifierData get_classifier_data(cmdline::parser *args) {
   config_file.close();
 
   const bool isInline = args->exist("inline");
+  const bool isStdin = args->exist("stdin");
 
   const string set = 
     args->exist("set") || isInline ? 
@@ -48,17 +50,17 @@ ClassifierData get_classifier_data(cmdline::parser *args) {
     config["label"].get<int>();
 
   const string datasets_path = 
-    args->exist("path") || isInline ? 
+    args->exist("path") || isInline || isStdin ? 
     args->get<string>("path") :
     config["datasets_path"].get<string>();
 
   const string training = 
-    args->exist("training") || isInline ? 
+    args->exist("training") || isInline || isStdin ? 
     args->get<string>("training") :
     config["datasets"][set]["training"].get<string>();
 
   const string testing = 
-    args->exist("testing") || isInline ? 
+    args->exist("testing") || isInline || isStdin ? 
     args->get<string>("testing") :
     config["datasets"][set]["testing"].get<string>();
 
@@ -70,9 +72,15 @@ ClassifierData get_classifier_data(cmdline::parser *args) {
     classes = config["datasets"][set]["labels"].get<vector<string>>();
   }
 
-  gmdl::Dataset *d = new gmdl::Dataset(datasets_path);
+  gmdl::Dataset *d;
+
+  if (isStdin) {
+    d = new gmdl::InputDataset(classes);
+  } else {
+    d = new gmdl::FileDataset(datasets_path, training, testing, classes);
+  }
+
   d->set_label_column(label);
-  d->open_sets(training, testing, classes);
 
   gmdl::GMDL *classifier = new gmdl::GMDL(*d);
 
