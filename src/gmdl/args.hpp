@@ -28,9 +28,15 @@ cmdline::parser *get_parser(int argc, char *argv[]) {
   );
 
   args->add(
-    "no-incremental-learning",
+    "online",
     '\0',
-    "disables incremental learning"
+    "makes algorithm online"
+  );
+
+  args->add(
+    "confusion-matrix",
+    '\0',
+    "prints confusion matrix"
   );
 
   args->add<int>(
