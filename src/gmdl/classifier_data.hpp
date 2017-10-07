@@ -30,14 +30,15 @@ static const map<string, FnPtr> METAPARAMS = {
 };
 
 ClassifierData get_classifier_data(cmdline::parser *args) {
-  std::ifstream config_file(args->get<string>("config"));
-  nlohmann::json config;
-  config_file >> config;
-
-  config_file.close();
-
   const bool isInline = args->exist("inline");
   const bool isStdin = args->exist("stdin");
+  nlohmann::json config;
+
+  if (!isStdin) {
+    ifstream config_file(args->get<string>("config"));
+    config_file >> config;
+    config_file.close();
+  }
 
   const string set = 
     args->exist("set") || isInline || isStdin ? 
@@ -66,7 +67,7 @@ ClassifierData get_classifier_data(cmdline::parser *args) {
 
   vector<string> classes;
 
-  if (args->exist("labels") || isInline) {
+  if (args->exist("labels") || isInline || isStdin) {
     split(classes, args->get<string>("labels"), boost::is_any_of(","));
   } else {
     classes = config["datasets"][set]["labels"].get<vector<string>>();
