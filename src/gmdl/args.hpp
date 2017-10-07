@@ -57,7 +57,8 @@ cmdline::parser *get_parser(int argc, char *argv[]) {
     "set",
     '\0',
     "the key to the set in the config file that should be read",
-    false
+    false,
+    ""
   );
 
   args->add<string>(

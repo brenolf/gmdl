@@ -40,7 +40,7 @@ ClassifierData get_classifier_data(cmdline::parser *args) {
   const bool isStdin = args->exist("stdin");
 
   const string set = 
-    args->exist("set") || isInline ? 
+    args->exist("set") || isInline || isStdin ? 
     args->get<string>("set") :
     config["set"].get<string>();
 
