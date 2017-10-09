@@ -2,7 +2,6 @@
 #define SRC_INCLUDE_GMDL_H_
 
 #define GMDL_DEFAULT_OMEGA -32
-#define GMDL_DEFAULT_BETA -32
 #define GMDL_DEFAULT_SIGMA 1
 #define GMDL_DEFAULT_F 1
 #define GMDL_DEFAULT_ETA 0.01
@@ -35,7 +34,6 @@ namespace gmdl {
     int _classes;
     int _dimension;
     double _omega = pow(2, GMDL_DEFAULT_OMEGA);
-    double _beta = pow(2, GMDL_DEFAULT_BETA);
     double _sigma = 1;
     double _forgeting_factor = 1;
     map<int, vector<kde_type>> _distributions;
@@ -154,7 +152,11 @@ namespace gmdl {
       double DL = 0;
 
       for (int c = 0; c < _classes; c++) {
-        DL += __L_hat(attributes, c, distances);
+        double dl = __L_hat(attributes, c, distances);
+
+        if (!isinf(dl)) {
+          DL += dl;
+        }
       }
 
       return DL;
@@ -282,23 +284,42 @@ namespace gmdl {
         return S;
       }
 
-      S[0] = __get_distance_to_prototype(attributes, 0);
+      bool areAllInf = true;
 
-      double S_min = S[0];
-      double S_max = S[0];
+      double S_min;
+      double S_max;
 
       for (int c = 1; c < _classes; c++) {
         S[c] = __get_distance_to_prototype(attributes, c);
+
+        if (!isinf(S[c])) {
+          areAllInf = false;
+          S_min = S_max = S[c];
+        }
+      }
+
+      if (areAllInf) {
+        return S;
+      }
+
+      for (int c = 0; c < _classes; c++) {
+        S[c] = __get_distance_to_prototype(attributes, c);
+
+        if (isinf(S[c])) {
+          continue;
+        }
 
         S_min = min(S_min, S[c]);
         S_max = max(S_max, S[c]);
       }
 
       for (int c = 0; c < _classes; c++) {
-        double normalized = (S[c] - S_min) / (S_max - S_min);
+        if (isinf(S[c])) {
+          continue;
+        }
 
-        S[c] = isinf(S[c]) ? 1 : -log2(0.5 * (1 - normalized + _beta));
-        S[c] = pow(S[c], _tau);
+        double normalized = (S[c] - S_min) / (S_max - S_min);
+        S[c] = pow(-log2(0.5 * (1 - normalized)), _tau);
       }
 
       return S;
@@ -314,10 +335,6 @@ namespace gmdl {
 
     void set_omega(double omega) {
       _omega = pow(2, -omega);
-    }
-
-    void set_beta(double beta) {
-      _beta = pow(2, -beta);
     }
 
     void set_tau(double tau) {

@@ -118,14 +118,6 @@ cmdline::parser *get_parser(int argc, char *argv[]) {
   );
 
   args->add<double>(
-    "beta",
-    '\0',
-    "the impact applied to the class that is the most distant from its prototype",
-    false,
-    GMDL_DEFAULT_BETA
-  );
-
-  args->add<double>(
     "omega",
     '\0',
     "the default description length assumed when there is no clue about the data being assessed",

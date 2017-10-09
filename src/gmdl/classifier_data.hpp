@@ -23,7 +23,6 @@ static const map<string, FnPtr> METAPARAMS = {
   {"learning_rate", &gmdl::GMDL::set_learning_rate},
   {"momentum", &gmdl::GMDL::set_momentum},
   {"tau", &gmdl::GMDL::set_tau},
-  {"beta", &gmdl::GMDL::set_beta},
   {"omega", &gmdl::GMDL::set_omega},
   {"forgetting_factor", &gmdl::GMDL::set_forgeting_factor},
   {"sigma", &gmdl::GMDL::set_sigma}
