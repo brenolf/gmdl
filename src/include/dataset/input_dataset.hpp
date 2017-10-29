@@ -14,8 +14,9 @@ namespace gmdl {
     bool replayed = false;
     unsigned long int lines_read = 0;
     unsigned long int training_size = 0;
+    bool trainingSetFinished = false;
 
-    bool iterate(pair<vector<double>, int> &sample) {
+    bool iterate(Sample &sample) {
       string line;
 
       if (replay != "" && !replayed) {
@@ -54,13 +55,21 @@ namespace gmdl {
       return true;
     }
 
+    bool training_samples(Sample &sample) {
+      return (lines_read >= training_size) ? false : iterate(sample);
+    }
+
+    bool testing_samples(Sample &sample) {
+      return (lines_read < training_size) ? false : iterate(sample);
+    }
+
   public:
     InputDataset(const vector<string> &classes): Dataset(classes) {
       cin >> training_size;
     }
 
     int get_dimension() {
-      pair<vector<double>, int> sample;
+      Sample sample;
       
       replay = "";
       replayed = false;
@@ -72,12 +81,20 @@ namespace gmdl {
       return sample.first.size();
     }
 
-    bool training_samples(pair<vector<double>, int> &sample) {
-      return (lines_read >= training_size) ? false : iterate(sample);
-    }
+    bool next(Sample &sample, SampleType *type) {
+      (*type) = SampleType::Test;
 
-    bool testing_samples(pair<vector<double>, int> &sample) {
-      return (lines_read < training_size) ? false : iterate(sample);
+      if (training_samples(sample)) {
+        (*type) = SampleType::Training;
+        return true;
+      }
+
+      if (!trainingSetFinished) {
+        trainingSetFinished = true;
+        return false;
+      }
+
+      return testing_samples(sample);
     }
   };
 }

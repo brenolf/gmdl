@@ -13,6 +13,7 @@ namespace gmdl {
     const string _root; 
     const string training;
     const string testing;
+    bool trainingSetFinished = false;
 
     ifstream _training;
     ifstream _testing;
@@ -27,7 +28,7 @@ namespace gmdl {
       }
     }
 
-    bool _iterate_over_file(pair<vector<double>, int> &sample, ifstream &file) {
+    bool _iterate_over_file(Sample &sample, ifstream &file) {
       string line;
 
       if (!getline(file, line)) {
@@ -69,6 +70,14 @@ namespace gmdl {
       _testing.open(_root + testing);
     }
 
+    bool training_samples(Sample &sample) {
+      return _iterate_over_file(sample, _training);
+    }
+
+    bool testing_samples(Sample &sample) {
+      return _iterate_over_file(sample, _testing);
+    }
+
   public:
     FileDataset(
       const string root, 
@@ -84,7 +93,7 @@ namespace gmdl {
     }
 
     int get_dimension() {
-      pair<vector<double>, int> sample;
+      Sample sample;
       _iterate_over_file(sample, _testing);
 
       _testing.clear();
@@ -93,12 +102,20 @@ namespace gmdl {
       return sample.first.size();
     }
 
-    bool training_samples(pair<vector<double>, int> &sample) {
-      return _iterate_over_file(sample, _training);
-    }
+    bool next(Sample &sample, SampleType *type) {
+      (*type) = SampleType::Test;
 
-    bool testing_samples(pair<vector<double>, int> &sample) {
-      return _iterate_over_file(sample, _testing);
+      if (training_samples(sample)) {
+        (*type) = SampleType::Training;
+        return true;
+      }
+
+      if (!trainingSetFinished) {
+        trainingSetFinished = true;
+        return false;
+      }
+
+      return testing_samples(sample);
     }
   };
 }

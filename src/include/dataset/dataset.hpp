@@ -8,6 +8,8 @@
 using namespace std;
 
 namespace gmdl {
+  typedef pair<vector<double>, int> Sample;
+
   class Dataset {
   protected:
     string _separator = ",";
@@ -16,6 +18,8 @@ namespace gmdl {
     map<string, int> class_ids;
 
   public:
+    enum class SampleType {Training, Test};
+
     Dataset(const vector<string> &local_classes) {
       for (int i = 0; i < local_classes.size(); i++) {
         class_ids[local_classes[i]] = i;
@@ -53,9 +57,13 @@ namespace gmdl {
       return header;
     }
 
+    bool next(Sample &sample) {
+      SampleType type;
+      return next(sample, &type);
+    }
+
     virtual int get_dimension() = 0;
-    virtual bool training_samples(pair<vector<double>, int> &sample) = 0;
-    virtual bool testing_samples(pair<vector<double>, int> &sample) = 0;
+    virtual bool next(Sample &sample, SampleType *type) = 0;
   };
 }
 
