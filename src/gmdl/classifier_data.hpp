@@ -72,17 +72,28 @@ ClassifierData get_classifier_data(cmdline::parser *args) {
     classes = config["datasets"][set]["labels"].get<vector<string>>();
   }
 
-  gmdl::Dataset *d;
+  int classes_length = -1;
+  int dimension_length = -1;
 
-  if (isStdin) {
-    d = new gmdl::InputDataset(classes);
+  gmdl::Dataset *d = NULL;
+
+  if (!args->exist("online")) {
+    if (isStdin) {
+      d = new gmdl::InputDataset(classes);
+    } else {
+      d = new gmdl::FileDataset(datasets_path, training, testing, classes);
+    }
+
+    d->set_label_column(label);
+
+    classes_length = d->get_label_length();
+    dimension_length = d->get_dimension();
   } else {
-    d = new gmdl::FileDataset(datasets_path, training, testing, classes);
+    classes_length = classes.size();
+    dimension_length = args->get<int>("dimension");
   }
 
-  d->set_label_column(label);
-
-  gmdl::GMDL *classifier = new gmdl::GMDL(*d);
+  gmdl::GMDL *classifier = new gmdl::GMDL(classes_length, dimension_length);
 
   for (auto const &item : METAPARAMS) {
     if (args->exist(item.first)) {

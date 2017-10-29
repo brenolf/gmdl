@@ -44,7 +44,6 @@ namespace gmdl {
     map<int, vector<double>> _variances_acc;
     map<int, vector<long long>> _SAMPLES;
     mt19937 _gen;
-    gmdl::Dataset &_initial_dataset;
 
     double _eta = GMDL_DEFAULT_ETA; // learning rate
     double _alpha = GMDL_DEFAULT_ALPHA; // momentum
@@ -258,9 +257,7 @@ namespace gmdl {
     }
 
   public:
-    GMDL(gmdl::Dataset &dataset) : _initial_dataset(dataset) {
-      _classes = dataset.get_label_length();
-      _dimension = dataset.get_dimension();
+    GMDL(int classes, int dimension) : _classes(classes), _dimension(dimension) {
       _Theta = vector<double>(_dimension, _MAX_THETA);
       _gradients = vector<double>(_dimension, 0);
       _gen = mt19937(_SEED);
@@ -365,10 +362,10 @@ namespace gmdl {
       }
     }
 
-    void train() {
+    void train(gmdl::Dataset *dataset) {
       pair<vector<double>, int> sample;
 
-      while (_initial_dataset.training_samples(sample)) {
+      while (dataset->training_samples(sample)) {
         train(sample);
       }
 

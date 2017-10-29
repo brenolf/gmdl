@@ -141,6 +141,14 @@ cmdline::parser *get_parser(int argc, char *argv[]) {
     GMDL_DEFAULT_SIGMA
   );
 
+  args->add<int>(
+    "dimension",
+    '\0',
+    "the number of attributes in the dataset (mandatory for online learning)",
+    false,
+    0
+  );
+
   args->parse_check(argc, argv);
 
   return args;

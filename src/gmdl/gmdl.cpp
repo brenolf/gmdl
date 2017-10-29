@@ -7,7 +7,7 @@ int main(int argc, char *argv[]) {
   cmdline::parser *args = get_parser(argc, argv);
   ClassifierData data = get_classifier_data(args);
 
-  data.classifier->train();
+  data.classifier->train(data.dataset);
 
   const int length = data.classifier->get_classes_length();
   double acc = 0;
