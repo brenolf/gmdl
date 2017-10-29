@@ -18,16 +18,23 @@ int main(int argc, char *argv[]) {
   gmdl::Sample sample;
   vector<string> predicted_classes;
   gmdl::Dataset::SampleType sample_type;
+  int prediction;
 
   int index = 0;
 
-  while (data.dataset->next(sample, &sample_type)) {
+  while (data.dataset->next(sample, &prediction, &sample_type)) {
     index++;
 
     switch (sample_type) {
       case gmdl::Dataset::SampleType::Training:
         if (args->exist("online")) {
           data.classifier->train(sample);
+        }
+      break;
+
+      case gmdl::Dataset::SampleType::Correction:
+        if (args->exist("online")) {
+          data.classifier->train(sample, prediction);
         }
       break;
 

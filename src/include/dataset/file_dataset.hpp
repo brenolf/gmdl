@@ -102,7 +102,8 @@ namespace gmdl {
       return sample.first.size();
     }
 
-    bool next(Sample &sample, SampleType *type) {
+    bool next(Sample &sample, int *prediction, SampleType *type) {
+      (*prediction) = -1;
       (*type) = SampleType::Test;
 
       if (training_samples(sample)) {

@@ -18,7 +18,7 @@ namespace gmdl {
     map<string, int> class_ids;
 
   public:
-    enum class SampleType {Training, Test};
+    enum class SampleType {Training, Correction, Test};
 
     Dataset(const vector<string> &local_classes) {
       for (int i = 0; i < local_classes.size(); i++) {
@@ -59,11 +59,12 @@ namespace gmdl {
 
     bool next(Sample &sample) {
       SampleType type;
-      return next(sample, &type);
+      int predicted;
+      return next(sample, &predicted, &type);
     }
 
     virtual int get_dimension() = 0;
-    virtual bool next(Sample &sample, SampleType *type) = 0;
+    virtual bool next(Sample &sample, int *predicted, SampleType *type) = 0;
   };
 }
 
