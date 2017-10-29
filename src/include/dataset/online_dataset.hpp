@@ -33,8 +33,10 @@ namespace gmdl {
       (*type) = TYPES[line];
       cin >> line;
 
-      if (*type == SampleType::Correction) {
-        cin >> (*prediction);
+      if ((*type) == SampleType::Correction) {
+        string aux;
+        cin >> aux;
+        (*prediction) = find_class_id(aux);
       }
 
       return read_sample(line, sample);

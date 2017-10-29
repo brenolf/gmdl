@@ -7,20 +7,21 @@ int main(int argc, char *argv[]) {
   cmdline::parser *args = get_parser(argc, argv);
   ClassifierData data = get_classifier_data(args);
 
-  if (!args->exist("online")) {
-    data.classifier->train(data.dataset);
-  }
-
-  const int length = data.classifier->get_classes_length();
-
+  const int length = data.dataset->get_label_length();
   Eigen::MatrixXf confusion = Eigen::MatrixXf::Zero(length, length);
-
+  
   gmdl::Sample sample;
   vector<string> predicted_classes;
   gmdl::Dataset::SampleType sample_type;
   int prediction;
 
   int index = 0;
+
+  if (!args->exist("online")) {
+    while (data.dataset->next(sample)) {
+      data.classifier->train(sample);
+    }
+  }
 
   while (data.dataset->next(sample, &prediction, &sample_type)) {
     index++;

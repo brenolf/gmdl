@@ -85,8 +85,6 @@ ClassifierData get_classifier_data(cmdline::parser *args) {
       d = new gmdl::FileDataset(datasets_path, training, testing, classes);
     }
 
-    d->set_label_column(label);
-
     classes_length = d->get_label_length();
     dimension_length = d->get_dimension();
   } else {
@@ -94,6 +92,8 @@ ClassifierData get_classifier_data(cmdline::parser *args) {
     dimension_length = args->get<int>("dimension");
     d = new gmdl::OnlineDataset(classes);
   }
+
+  d->set_label_column(label);
 
   gmdl::GMDL *classifier = new gmdl::GMDL(classes_length, dimension_length);
 

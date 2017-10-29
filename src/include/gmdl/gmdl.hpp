@@ -319,18 +319,6 @@ namespace gmdl {
       }
     }
 
-    void train(gmdl::Dataset *dataset) {
-      Sample sample;
-
-      while (dataset->next(sample)) {
-        train(sample);
-      }
-
-      for (int c = 0; c < _classes; c++) {
-        __estimate_kernel_densities(c);
-      }
-    }
-
     void train(Sample &sample) {
       xokdepp::vector_type vectorized_class_sample(_dimension);
       normal_distribution<> noise_distribution(0, _sigma);
@@ -372,6 +360,8 @@ namespace gmdl {
 
         pdf.add_sample(vectorized_sample);
       }
+
+      __estimate_kernel_densities(sample.second);
     }
 
     void train(Sample &sample, int prediction) {
