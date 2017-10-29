@@ -1,6 +1,7 @@
 #ifndef INCLUDE_GMDL_CLASSIFIER  
 #define INCLUDE_GMDL_CLASSIFIER  
 
+#include "dataset/online_dataset.hpp"
 #include "dataset/input_dataset.hpp"
 #include "dataset/file_dataset.hpp"
 #include "gmdl/gmdl.hpp"
@@ -91,6 +92,7 @@ ClassifierData get_classifier_data(cmdline::parser *args) {
   } else {
     classes_length = classes.size();
     dimension_length = args->get<int>("dimension");
+    d = new gmdl::OnlineDataset(classes);
   }
 
   gmdl::GMDL *classifier = new gmdl::GMDL(classes_length, dimension_length);

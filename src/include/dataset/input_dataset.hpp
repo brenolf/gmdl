@@ -34,25 +34,7 @@ namespace gmdl {
         replay = line;
       }
 
-      vector<string> xs;
-      vector<double> attributes;
-
-      split(xs, line, boost::is_any_of(_separator));
-
-      int LABEL_COLUMN = (_label_column == -1) ? xs.size() - 1 : _label_column;
-
-      for (int column = 0; column < xs.size(); column++) {
-        if (column == LABEL_COLUMN) {
-          continue;
-        }
-
-        attributes.push_back(stod(xs[column]));
-      }
-
-      sample.first = attributes;
-      sample.second = find_class_id(xs[LABEL_COLUMN]);
-
-      return true;
+      return read_sample(line, sample);
     }
 
     bool training_samples(Sample &sample) {
