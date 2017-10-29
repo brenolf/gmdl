@@ -33,6 +33,7 @@ options:
       --omega                the default description length assumed when there is no clue about the data being assessed (double [=-32])
       --forgetting_factor    the factor by which the samples in the mixture are considered outdated (1 = no forgetting) (double [=1])
       --sigma                the standard deviation to the noise applied when the covariance matrix is getting close to be singular (double [=1])
+      --dimension            the number of attributes in the dataset (mandatory for online learning) (int [=0])
   -?, --help                 print this message
 ```
 
