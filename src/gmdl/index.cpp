@@ -24,24 +24,27 @@ int main(int argc, char *argv[]) {
   while (data.dataset->next(sample, &sample_type)) {
     index++;
 
-    if (sample_type == gmdl::Dataset::SampleType::Training) {
-      if (args->exist("online")) {
-        data.classifier->train(sample);
-      }
-    } else {
-      gmdl::prediction p = data.classifier->predict(sample.first);
+    switch (sample_type) {
+      case gmdl::Dataset::SampleType::Training:
+        if (args->exist("online")) {
+          data.classifier->train(sample);
+        }
+      break;
 
-      if (args->exist("online")) {
-        cout << data.dataset->get_label_name(p.label) << endl;
-      } else {
-        predicted_classes.push_back(data.dataset->get_label_name(p.label));
-      }
-  
-      if (p.label != sample.second && !args->exist("quiet")) {
-        debugger(index, sample, p, data.classifier);
-      }
-  
-      confusion(sample.second, p.label)++;
+      default:
+        gmdl::prediction p = data.classifier->predict(sample.first);
+      
+        if (args->exist("online")) {
+          cout << data.dataset->get_label_name(p.label) << endl;
+        } else {
+          predicted_classes.push_back(data.dataset->get_label_name(p.label));
+        }
+    
+        if (p.label != sample.second && !args->exist("quiet")) {
+          debugger(index, sample, p, data.classifier);
+        }
+    
+        confusion(sample.second, p.label)++;
     }
   }
 
