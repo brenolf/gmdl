@@ -194,7 +194,11 @@ namespace gmdl {
 
       double covariance = variance + ((delta * delta2) / samples);
 
-      return covariance <= xokdepp::MIN_BANDWIDTH;
+      if (covariance == 0) {
+        return true;
+      }
+
+      return log(covariance) <= xokdepp::MIN_BANDWIDTH;
     }
 
     void __estimate_kernel_density(kde_type &pdf) {

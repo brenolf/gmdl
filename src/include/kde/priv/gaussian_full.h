@@ -191,7 +191,7 @@ namespace xokdepp {
       if (isnan(_covariance_log_determinant) || isnan(_covariance_inverse(1, 1))) {
         //std::cout << "gaussian::compute_determinant_and_inverse::NaN detected" << std::endl;
         //std::cout << "_covariance_inverse(1,1)" << _covariance_inverse(1, 1) << std::endl;
-        std::cout << "WARNING :: _covariance_log_determinant = " << _covariance_log_determinant << std::endl;
+        // std::cout << "WARNING :: _covariance_log_determinant = " << _covariance_log_determinant << std::endl;
         //throw std::exception();
         _covariance_log_determinant = std::numeric_limits<data_type>::infinity(); //FIXME this needs to be tested
       }

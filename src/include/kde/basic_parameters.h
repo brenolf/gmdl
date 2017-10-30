@@ -40,7 +40,7 @@ namespace xokdepp {
   const data_type min_coef_whitening = 1e-7;
   const data_type epsilon_whitening = 1e-7;      //epsilon to add to the covariance
 
-  const data_type MIN_BANDWIDTH = 1e-9; // minimum eigenvalues/singular values (bandwidth)
+  const data_type MIN_BANDWIDTH = 1e-10; // minimum eigenvalues/singular values (bandwidth)
   //const data_type min_bw = xokdepp::epsilon12; // minimum eigenvalues/singular values (bandwidth)
 
 }
