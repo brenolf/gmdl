@@ -29,10 +29,10 @@ echo "$Cyan"'Installing libraries\n'"$Color_Off"
 
 if test "$OS" = "darwin"; then
   brew install llvm eigen boost;
-  ln -s /usr/local/opt/llvm/bin/clang++ /usr/local/bin/clang-omp++
+  # ln -s /usr/local/opt/llvm/bin/clang++ /usr/local/bin/clang-omp++
 else
   sudo apt-get install clang++ libomp-dev libboost-dev libeigen3-dev;
-  sudo ln -s /usr/bin/clang++ /usr/bin/clang-omp++;
+  # sudo ln -s /usr/bin/clang++ /usr/bin/clang-omp++
 fi
 
 echo "$Green"'\nAll done! Run `make` to compile.'"$Color_Off"

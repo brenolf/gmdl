@@ -22,7 +22,7 @@ CXXFLAGS+= -finline -fbuiltin #-fexpensive-optimizations
 
 LDFLAGS= -L/usr/local/opt/llvm/lib
 
-CXX = time clang-omp++
+CXX = time clang++
 
 .PHONY: all
 all: $(PROGRAMS_GMDL)
