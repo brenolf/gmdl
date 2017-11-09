@@ -144,7 +144,7 @@ namespace gmdl {
         DL += __L_hat_attribute(attributes, class_index, attr);
       }
 
-      return max(0.0, DL * S[class_index] + __LM(class_index));
+      return max(0.0, DL * S[class_index] + log2(__LM(class_index)));
     }
 
     double __L_total(vector<double> &attributes, vector<double> &distances) {
@@ -370,7 +370,6 @@ namespace gmdl {
 
     void train(Sample &sample, int prediction) {
       train(sample);
-      __estimate_kernel_densities(sample.second);
       __update_Theta(sample, prediction);
     }
 
