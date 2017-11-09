@@ -144,7 +144,11 @@ namespace gmdl {
         DL += __L_hat_attribute(attributes, class_index, attr);
       }
 
-      return max(0.0, DL * S[class_index] + log2(__LM(class_index)));
+      int LM = __LM(class_index);
+      LM = floor(log2(LM));
+      LM = (int) LM;
+
+      return max(0.0, DL * S[class_index] + LM);
     }
 
     double __L_total(vector<double> &attributes, vector<double> &distances) {
@@ -167,8 +171,8 @@ namespace gmdl {
       return __L_hat(attributes, class_index, S) / __L_total(attributes, S);
     }
 
-    double __LM(int class_index) {
-      double complexity = 0;
+    int __LM(int class_index) {
+      int complexity = 1;
 
       for (int attr = 0; attr < _dimension; attr++) {
         complexity += _distributions.at(class_index).at(attr).size();
