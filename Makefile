@@ -18,7 +18,7 @@ CXXFLAGS = -std=c++11 -m64 -ggdb -O3 $(INCLUDES) -fPIC -fpic -Wall -Wextra -Wno-
 # CXXFLAGS+= -ffast-math
 CXXFLAGS+= -DNDEBUG -DEIGEN_NO_DEBUG -msse2 -msse3 -mssse3 -msse4 -msse4.1 -msse4.2
 # CXXFLAGS+= -fopenmp
-CXXFLAGS+= -finline -fbuiltin #-fexpensive-optimizations
+CXXFLAGS+= -finline -fbuiltin -DPRECISION=MKL_SINGLE #-fexpensive-optimizations
 
 LDFLAGS= -L/usr/local/opt/llvm/lib
 # LDFLAGS= -fopenmp

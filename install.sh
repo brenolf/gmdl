@@ -31,8 +31,8 @@ if test "$OS" = "darwin"; then
   brew install llvm eigen boost;
   # ln -s /usr/local/opt/llvm/bin/clang++ /usr/local/bin/clang-omp++
 else
-  sudo apt-get install clang++ libomp-dev libboost-dev libeigen3-dev;
-  # sudo ln -s /usr/bin/clang++ /usr/bin/clang-omp++
+  sudo apt-get install clang-3.8 libomp-dev libboost-dev libeigen3-dev;
+  sudo ln -s /usr/bin/clang++-3.8 /usr/bin/clang++
 fi
 
 echo "$Green"'\nAll done! Run `make` to compile.'"$Color_Off"
